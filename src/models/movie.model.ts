@@ -12,10 +12,28 @@ Movie:
     Rating Count [number]
     
 */
-
-
-
-
+import mongoose from "mongoose";
+export interface Movie {
+    title: string;
+    genre: string;
+    duration: number;
+    description: string;
+    posterUrl: string;
+    ratingSum: number;
+    ratingCount: number;
+    status: "Now Showing" | "Coming Soon";
+}
+export const movieSchema = new mongoose.Schema<Movie>({
+    title: { type: String, required: true },
+    genre: { type: String, required: true },
+    duration: { type: Number, required: true },
+    description: { type: String, required: true },
+    posterUrl: { type: String, required: true },
+    ratingSum: { type: Number, default: 0 },
+    ratingCount: { type: Number, default: 0 },
+    status: { type:String, enum: ["Now Showing", "Coming Soon"], required: true }
+});
+export const Movies  = mongoose.model("Movie", movieSchema);
 
 
 
