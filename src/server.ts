@@ -6,6 +6,7 @@ const app: Application = express();
 import "dotenv/config"
 import { connectDB } from "./config/db";
 import { setupSwagger } from "./config/swagger";
+import movieRouter from "./routes/movie.router"
 const PORT = process.env.PORT
 
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use(express.json());
 setupSwagger(app);
 
 
+app.use("/movies", movieRouter)
 
 
 
