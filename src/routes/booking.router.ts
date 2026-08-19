@@ -12,11 +12,11 @@ const router = Router()
 
 router.post("/", authenticate, authorize("Customer"), validateNewBooking, createBooking);
 
-router.get("/my-bookings", authenticate, authorize("Customer"), getBookingHistory);
+router.get("/bookings-history", authenticate, authorize("Customer"), getBookingHistory);
 
 router.patch("/:bookingId/cancel", authenticate, authorize("Customer"), validateCancelBooking, cancelBooking);
 
-router.get("/", authenticate, authorize("Cinema Admin"), validategetfreeSeats, getfreeSeats);
+router.get("/showtimes/:showtimeId/free-seats", authenticate, authorize("Customer"), validategetfreeSeats, getfreeSeats);
 
 
 

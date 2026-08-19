@@ -60,7 +60,7 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
 
 //
 export const validateCancelBooking = async (req: Request, res: Response, next: NextFunction) => {
-    const bookingId = req.body.bookingId;
+    const bookingId = req.params.bookingId;
     if (!bookingId) {
         return res.status(400).json({ error: 'Booking ID is required' });
     }
@@ -92,7 +92,7 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     next();
 };
 export const validategetfreeSeats = async (req: Request, res: Response, next: NextFunction) => {
-    const showtimeId = req.body.showtimeId;   
+    const showtimeId = req.params.showtimeId;   
 
     if (!showtimeId) {
         return res.status(400).json({ error: 'Showtime ID is required' });

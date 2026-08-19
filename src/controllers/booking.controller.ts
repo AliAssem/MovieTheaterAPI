@@ -65,7 +65,7 @@ export const getBookingHistory = async (req: Request, res: Response) => {
 }
 export const getfreeSeats = async (req: Request, res: Response) => {
     try {
-        const showtimeId = req.body.showtimeId;
+        const showtimeId = req.params.showtimeId;
         const showtime = await Showtime.findById(showtimeId);
         const freeSeats = [];
         for (let i = 0; i < 26; i++) {
