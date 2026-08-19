@@ -18,16 +18,16 @@ import {
 import { validateNewMovie } from "../middlewares/validateNewMovie.middleware";
 
 
-// import {authenticate, authorize} from "../middlewares/AuthMiddleware";
+import { authenticate, requireRole } from "../middlewares/AuthMiddleware";
 
 const router = Router();
 
-router.get("/", getAllMovies);
-router.get("/search", searchMovies)
+router.get("/", authenticate, getAllMovies);
+router.get("/search", authenticate, searchMovies)
 
-router.post("/add", /*authenticate, authorize("Cinema Admin"),*/ validateNewMovie, addMovie);
+router.post("/add", authenticate, requireRole("Cinema Admin"), validateNewMovie, addMovie);
 // router.put("/edit", /*authenticate, authorize("Cinema Admin"),*/ editMovie);               add /movies/replace LATER
-router.patch("/edit", /*authenticate, authorize("Cinema Admin"),*/ editMovie);
-router.delete("/delete", /*authenticate, authorize("Cinema Admin"),*/ deleteMovie);
+router.patch("/edit", authenticate, requireRole("Cinema Admin"), editMovie);
+router.delete("/delete", authenticate, requireRole("Cinema Admin"), deleteMovie);
 
 export default router;

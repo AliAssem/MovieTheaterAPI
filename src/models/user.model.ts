@@ -8,7 +8,7 @@ User:
 
 import mongoose from "mongoose";
 
-type Role = ("Customer" | "Cinema Admin")
+export type Role = ("Customer" | "Cinema Admin")
 
 
 const userSchema = new mongoose.Schema({

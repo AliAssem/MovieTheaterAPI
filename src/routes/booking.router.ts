@@ -1,22 +1,22 @@
 import { Router } from "express";
 import {
   createBooking, 
-  getMyBookings, 
-  cancelBooking, 
-  getAllBookings
+  cancelBooking
+  // getMyBookings, 
+  // getAllBookings
 } from "../controllers/booking.controller";
-import { authenticate, authorize } from "../middlewares/AuthMiddleware";  
+import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
 import { validateNewBooking } from "../middlewares/validateNewBooking.middleware";
 const router = Router()
 
-router.post("/", authenticate, authorize("Customer"), validateNewBooking, createBooking);
+router.post("/", authenticate, requireRole("Customer"), validateNewBooking, createBooking);
 
-router.get("/my-bookings", authenticate, authorize("Customer"), getMyBookings);
+// router.get("/my-bookings", authenticate, requireRole("Customer"), getMyBookings);
 
-router.patch("/:bookingId/cancel", authenticate, authorize("Customer"), cancelBooking);
+router.patch("/:bookingId/cancel", authenticate, requireRole("Customer"), cancelBooking);
 
-router.get("/", authenticate, authorize("Cinema Admin"), getAllBookings);
+// router.get("/", authenticate, requireRole("Cinema Admin"), getAllBookings);
 
 
 

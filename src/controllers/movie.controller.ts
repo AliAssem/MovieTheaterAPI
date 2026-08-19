@@ -19,14 +19,16 @@ export const getAllMovies = async (req: Request, res: Response) => {
     res.status(200).send(movies)
 }
 
-export const searchMovies = async (req: Request, res: Response) => {
+export const searchMovies = async (req: Request, res: Response) => { // add filter by showtime LATER
     try{
         let searchQuery:any = { }
 
-        const {title, genre, durationMin, durationMax, ratingMin, ratingMax} = req.query
+        const {title, genre, durationMin, durationMax, ratingMin,
+             ratingMax, sortType, sortDirection, status} = req.query
 
         if(title) searchQuery.title = title
         if(genre) searchQuery.genre = genre
+        if(status && (status == "Now Showing" || status == "Coming Soon")) searchQuery.status = status
 
         if(durationMin || durationMax){
             searchQuery.duration = { }
@@ -36,12 +38,20 @@ export const searchMovies = async (req: Request, res: Response) => {
 
         if(ratingMin || ratingMax){
             searchQuery.duration = { }
-            if(ratingMin){ searchQuery.duration.$gte = Number(ratingMin) }
-            if(ratingMax){ searchQuery.duration.$lte = Number(ratingMax) }
+            if(ratingMin){ searchQuery.rating.$gte = Number(ratingMin) }
+            if(ratingMax){ searchQuery.rating.$lte = Number(ratingMax) }
         }
 
 
         const searchedMovies = await Movies.find(searchQuery)
+
+        let sortD = 1
+        if(sortDirection === "dec") { sortD = -1 }
+
+        if(sortType){
+                 if(sortType == "rating"){ searchedMovies.sort((movA, movB) => {return (movA.rating - movB.rating) * sortD}) }
+            else if(sortType == "releaseDate"){ searchedMovies.sort((movA, movB) => {return (movA.releaseDate.getTime() - movB.releaseDate.getTime()) * sortD}) }
+        }
 
         res.status(200).send(searchedMovies)
     }
@@ -53,22 +63,21 @@ export const searchMovies = async (req: Request, res: Response) => {
 
 
 export const addMovie = async (req: Request, res: Response) => {
-    const {title, genre, duration, description, posterUrl} = req.body
+    const {title, genre, duration, description, posterUrl, releaseDate} = req.body
 
-    const newMovie: Movie = {
-        title: title,
-        genre: genre,
-        duration: duration,
-        description: description,
-        posterUrl: posterUrl,
-        rating: 0,
-        ratingSum: 0,
-        ratingCount: 0,
-        status: "Coming Soon"
-    }
+    
 
-    try{    
-        await Movies.create(newMovie)
+    try{
+        const newMovie = await Movies.create({
+            title: title,
+            genre: genre,
+            duration: duration,
+            description: description,
+            posterUrl: posterUrl,
+            releaseDate: new Date(releaseDate),
+            status: "Coming Soon"
+        })
+        // await Movies.create(newMovie)
         res.status(201).send({message: `Movie created successfully`, newMovie})
     }
     catch{

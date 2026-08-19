@@ -19,21 +19,23 @@ export interface Movie {
     duration: number;
     description: string;
     posterUrl: string;
-    rating: number
+    rating: number;
     ratingSum: number;
     ratingCount: number;
+    releaseDate: Date;
     status: "Now Showing" | "Coming Soon";
 }
 export const movieSchema = new mongoose.Schema<Movie>({
-    title: { type: String, required: true },
-    genre: { type: String, required: true },
-    duration: { type: Number, required: true },
+    title:       { type: String, required: true },
+    genre:       { type: String, required: true },
+    duration:    { type: Number, required: true },
     description: { type: String, required: true },
-    posterUrl: { type: String, required: true },
-    rating: {type: Number, required: true, default: 0},
-    ratingSum: { type: Number, default: 0 },
+    posterUrl:   { type: String, required: true },
+    rating:      { type: Number, default: 0 },
+    ratingSum:   { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
-    status: { type:String, enum: ["Now Showing", "Coming Soon"], required: true }
+    releaseDate: { type: Date,   required: false },
+    status:      { type:String, enum: ["Now Showing", "Coming Soon"], required: true }
 });
 export const Movies  = mongoose.model("Movie", movieSchema);
 
