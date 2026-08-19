@@ -13,7 +13,6 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
     if (!customerId || !showtimeId || !selectedSeats || !bookingStatus) {
         return res.status(400).json({ error: 'All fields are required' });
     }
-
     // Validate booking status
     if (!['Pending', 'Confirmed', 'Cancelled'].includes(bookingStatus)) {
         return res.status(400).json({ error: 'Invalid booking status' });
@@ -36,6 +35,9 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
     selectedSeats.sort()
     for(let i=0; i<selectedSeats.length; i++){
        //check if seat is valid and unique and not already booked
+       if(selectedSeats[i].length !== 2){
+            return res.status(400).json({ error: 'Selected seats must be valid strings' });
+        }
         if ( (selectedSeats[i][0] < 'A' || selectedSeats[i][0] > 'Z') || selectedSeats[i][1] < '0' || (selectedSeats[i][1] > '9' )){
             return res.status(400).json({ error: 'Selected seats must be valid strings' });
         }
@@ -50,12 +52,15 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
     if(Date.now() >= new Date(showtime.date).getTime()){
         return res.status(400).json({ error: 'Cannot book tickets for a showtime that has already passed' });
     }
+    if(movie.status === "Coming Soon"){
+        return res.status(400).json({ error: 'Cannot book tickets for a movie that is coming soon' });
+    }
     next();
 };
 
 //
 export const validateCancelBooking = async (req: Request, res: Response, next: NextFunction) => {
-    const bookingId = req.params.bookingId;
+    const bookingId = req.body.bookingId;
     if (!bookingId) {
         return res.status(400).json({ error: 'Booking ID is required' });
     }
@@ -83,6 +88,14 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     }
     if (booking.bookingStatus === 'Cancelled') {
     return res.status(400).json({ error: 'Booking is already cancelled' });
+    }
+    next();
+};
+export const validategetfreeSeats = async (req: Request, res: Response, next: NextFunction) => {
+    const showtimeId = req.body.showtimeId;   
+
+    if (!showtimeId) {
+        return res.status(400).json({ error: 'Showtime ID is required' });
     }
     next();
 };

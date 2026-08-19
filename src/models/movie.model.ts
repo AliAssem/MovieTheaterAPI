@@ -19,7 +19,7 @@ export interface Movie {
     duration: number;
     description: string;
     posterUrl: string;
-    rating: number
+    rating: number;
     ratingSum: number;
     ratingCount: number;
     status: "Now Showing" | "Coming Soon";

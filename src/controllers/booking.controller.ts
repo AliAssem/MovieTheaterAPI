@@ -54,3 +54,29 @@ export const cancelBooking = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error cancelling booking' });
     }
 }
+export const getBookingHistory = async (req: Request, res: Response) => {
+    try {
+        const customerId = (req as any).user.Id;
+        const user = await Users.findById(customerId)
+        res.status(200).json({ message: 'Booking history retrieved successfully', history: user?.history });
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving booking history' });
+    }
+}
+export const getfreeSeats = async (req: Request, res: Response) => {
+    try {
+        const showtimeId = req.body.showtimeId;
+        const showtime = await Showtime.findById(showtimeId);
+        const freeSeats = [];
+        for (let i = 0; i < 26; i++) {
+            for (let j = 0; j < 10; j++) {
+                if (!showtime!.seats[i][j]) {
+                    freeSeats.push(`${String.fromCharCode(65 + i)}${j + 1}`);
+                }
+            }
+        }
+        res.status(200).json({ message: 'Free seats retrieved successfully', freeSeats });
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving free seats' });
+    }
+}
