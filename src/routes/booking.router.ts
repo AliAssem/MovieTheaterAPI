@@ -1,22 +1,22 @@
 import { Router } from "express";
 import {
   createBooking, 
-  cancelBooking
-  // getMyBookings, 
-  // getAllBookings
+  getBookingHistory, 
+  cancelBooking, 
+  getfreeSeats
 } from "../controllers/booking.controller";
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
-import { validateNewBooking } from "../middlewares/validateNewBooking.middleware";
+import { validateCancelBooking, validategetfreeSeats, validateNewBooking } from "../middlewares/validateNewBooking.middleware";
 const router = Router()
 
 router.post("/", authenticate, requireRole("Customer"), validateNewBooking, createBooking);
 
-// router.get("/my-bookings", authenticate, requireRole("Customer"), getMyBookings);
+router.get("/bookings-history", authenticate, authorize("Customer"), getBookingHistory);
 
-router.patch("/:bookingId/cancel", authenticate, requireRole("Customer"), cancelBooking);
+router.patch("/:bookingId/cancel", authenticate, authorize("Customer"), validateCancelBooking, cancelBooking);
 
-// router.get("/", authenticate, requireRole("Cinema Admin"), getAllBookings);
+router.get("/showtimes/:showtimeId/free-seats", authenticate, authorize("Customer"), validategetfreeSeats, getfreeSeats);
 
 
 
