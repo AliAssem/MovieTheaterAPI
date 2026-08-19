@@ -91,7 +91,7 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     }
     next();
 };
-export const validategetfreeSeats = async (req: Request, res: Response, next: NextFunction) => {
+export const validateShowtimeId = async (req: Request, res: Response, next: NextFunction) => {
     const showtimeId = req.params.showtimeId;   
 
     if (!showtimeId) {
