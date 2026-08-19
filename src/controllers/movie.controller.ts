@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Movie, Movies } from "../models/movie.model";
+import { Showtime } from "../models/showtime.model";
 
 
 
@@ -117,3 +118,22 @@ export const deleteMovie = async (req: Request, res: Response) => {
         res.status(500).send({message: `Server error while deleting a movie`})
     }
 }
+
+const browseShowtimes = async (req: Request, res: Response) => {
+    try{
+        const { movieId, date, hallNumber } = req.query;
+        let filterQuery: any = {};
+
+        if (movieId) filterQuery.movie = movieId;
+        
+        if (date) filterQuery.date = date;
+
+        if (hallNumber) filterQuery.hallNumber = hallNumber;
+
+        const showtimes = await Showtime.find(filterQuery).populate("movie", "title posterUrl duration rating");
+
+        res.status(200).send(showtimes);
+    } catch {
+        res.status(500).send({ message: "Server error while fetching showtimes" });
+    }
+    }
