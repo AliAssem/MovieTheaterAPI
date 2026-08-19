@@ -23,4 +23,4 @@ export const bookingSchema = new mongoose.Schema<Booking>({
     totalPrice: { type: Number, required: true },
     bookingStatus: { type: String, enum: ["Pending", "Confirmed", "Cancelled"], required: true }
 });
-export const Booking = mongoose.model("Booking", bookingSchema);
+export const Bookings = mongoose.model("Booking", bookingSchema);
