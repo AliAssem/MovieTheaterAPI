@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
   favoriteMovies: {
     type: [ {movieId: {type: Number, required: true}} ],
     required: false
+  },
+  history : {
+    type: [ {showtimeId: {type: Number, required: true}},{booked_seats: {type: [String], required: true}} ],
+    required: false
   }
 }, { collection: "users" });
 

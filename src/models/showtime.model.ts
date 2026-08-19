@@ -16,7 +16,7 @@ import mongoose from "mongoose";
 export const showtimeSchema = new mongoose.Schema({
     movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie", required: true },
     hallNumber: { type: Number, required: true },
-    seats: [[Boolean]], default: seatsArr,
+    seats: { type: [[Boolean]], default: seatsArr },
     date: { type: Date, required: true },
     startTime: { type: Number, required: true },
     endTime: { type: Number, required: true },
