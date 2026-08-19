@@ -19,6 +19,7 @@ export interface Movie {
     duration: number;
     description: string;
     posterUrl: string;
+    rating: number
     ratingSum: number;
     ratingCount: number;
     status: "Now Showing" | "Coming Soon";
@@ -29,6 +30,7 @@ export const movieSchema = new mongoose.Schema<Movie>({
     duration: { type: Number, required: true },
     description: { type: String, required: true },
     posterUrl: { type: String, required: true },
+    rating: {type: Number, required: true, default: 0},
     ratingSum: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
     status: { type:String, enum: ["Now Showing", "Coming Soon"], required: true }
