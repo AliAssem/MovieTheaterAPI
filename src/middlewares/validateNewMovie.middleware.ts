@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 
 
 export const validateNewMovie = (req: Request, res: Response, next: NextFunction) => {
-    const {title, genre, duration, description, posterUrl} = req.body
+    const {title, genre, duration, description, posterUrl, releaseDate} = req.body
 
     if(!title || typeof title !== "string" || title == "") {
         return res.status(400).send({message: `Movie 'title' must be a non-empty string`})
@@ -24,7 +24,9 @@ export const validateNewMovie = (req: Request, res: Response, next: NextFunction
         return res.status(400).send({message: `Movie 'duration' must be a positive number`})
     }
 
-
+    if(!releaseDate || !(new Date(releaseDate).valueOf())){
+        return res.status(400).send({message: `Movie 'releaseDate' must be a valid date eg. 2026/10/14`})
+    }
 
 
     next()

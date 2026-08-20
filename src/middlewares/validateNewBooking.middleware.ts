@@ -2,7 +2,7 @@
 // validates Customer, Showtime, Selected Seats, Total Price, Booking Status (Pending / Confirmed / Cancelled)
 import { Request, Response, NextFunction } from 'express';
 import { Users } from '../models/user.model';
-import { Showtime } from '../models/showtime.model';
+import { Showtimes } from '../models/showtime.model';
 import {Movies} from '../models/movie.model';
 import { Bookings } from '../models/booking.model';
 export const validateNewBooking = async (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +28,7 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
         return res.status(400).json({ error: 'Customer does not exist' });
     }
     //check if showtime exists
-    const showtime = await Showtime.findById(showtimeId);
+    const showtime = await Showtimes.findById(showtimeId);
     if (!showtime) {
         return res.status(400).json({ error: 'Showtime does not exist' });
     }
@@ -75,13 +75,13 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     if (current_user?.role === 'Customer' && booking.customer.toString() !== current_user.id.toString()) {
         return res.status(403).json({ error: 'You are not authorized to cancel this booking' });
     }
-    const showtime = await Showtime.findById(booking.showtime);
+    const showtime = await Showtimes.findById(booking.showtime);
     if (!showtime) {
         return res.status(404).json({ error: 'Associated showtime not found' });
     }
 
     const showDateTime = new Date(showtime.date);
-    showDateTime.setMinutes(showDateTime.getMinutes() + showtime.startTime);
+    showDateTime.setMinutes(showDateTime.getMinutes() + Number(showtime.startTime));
 
     if (Date.now() >= showDateTime.getTime()) {
         return res.status(400).json({ error: 'Cannot cancel a booking after the showtime has started' });
@@ -97,7 +97,7 @@ export const validateShowtimeId = async (req: Request, res: Response, next: Next
     if (!showtimeId) {
         return res.status(400).json({ error: 'Showtime ID is required' });
     }
-    if (!await Showtime.findById(showtimeId)) {
+    if (!await Showtimes.findById(showtimeId)) {
         return res.status(404).json({ error: 'Showtime not found' });
     }
     next();
@@ -108,7 +108,7 @@ export const validatefeedback=async(req:Request,res:Response,next:NextFunction)=
     if(!showtimeId||!feedback||!rate){
          return res.status(400).json({ error: 'All fields are required' });
     }
-    const showtime=await Showtime.findById(showtimeId)
+    const showtime=await Showtimes.findById(showtimeId)
     if(!showtime){
         return res.status(400).json({ error: 'Showtime does not exist' });
     }

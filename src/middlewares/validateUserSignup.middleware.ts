@@ -23,10 +23,11 @@ Valid Password:
 
 export const validateUserSignup = (req: Request, res: Response, next: NextFunction) => {
 
-    const fullName:any = "Ahmed Mohamed"
-    const email:any = "ahmedmohamed@gmail.com"
-    let password:any = "password"
+    // const fullName:any = "Ahmed Mohamed"
+    // const email:any = "ahmedmohamed@gmail.com"
+    // let password:any = "password"
     // const role = "Role"       // users cant signup as admin? LATER
+    const { fullName, email, password } = req.body
 
     // Link variables above to request body LATER
 
@@ -47,6 +48,9 @@ export const validateUserSignup = (req: Request, res: Response, next: NextFuncti
     // Email [valid mail provider]
     if(!validMailProviders.includes(emailFormatted[1])){
         return res.status(400).send({message: `Email provider is not a recognized provider`})
+    }
+    if(emailFormatted[0] == ""){
+        return res.status(400).send({message: `provided email is not a valid email "example@provider.com"`})
     }
     // Add validation for ' ' and any non valid character of an email LATER
 
