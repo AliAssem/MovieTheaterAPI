@@ -1,37 +1,49 @@
 import { Request, Response } from "express"
 import { Showtimes } from "../models/showtime.model"
 import { updateMovieStatus } from "./movie.controller";
+import { getShowtimeModifiable } from "./Customers.controller";
 
 
 export const createShowtime = async (req: Request, res: Response) => {
     
     try{
-        const {movieId, hallNumber, date, startTime, endTime, ticketPrice, rows, columns} = req.body
+        const {movieId, hallNumber, date, startTime, endTime, ticketPrice, rows, columns, unavailableSeats} = req.body
 
         // let seats: boolean[][] = maxSeatsArr
         let seats: boolean[][] = Array.from({ length: 26 }, () => 
           Array(10).fill(false)
         );
+        let seatsVisiblity: boolean[][] = Array.from({ length: 26 }, () => 
+          Array(10).fill(true)
+        );
 
         for(let i=rows; i<26; i++){
             for(let j=0; j<10; j++){
-                seats[i][j] = true;
+                // seats[i][j] = true;
+                seatsVisiblity[i][j] = false;
             }
         }
 
         for(let i=columns; i<10; i++){
             for(let j=0; j<26; j++){
-                seats[j][i] = true;
+                // seats[j][i] = true;
+                seatsVisiblity[j][i] = false;
             }
+        }
+
+        for(let i=0; i<unavailableSeats.length; i++){
+            const seat = unavailableSeats[i]
+            seatsVisiblity[seat.charCodeAt(0) - 65][Number(seat[1]) - 1] = false
         }
 
         
 
 
-        await Showtimes.create({
+        const newShowtime = await Showtimes.create({
             movieId,
             hallNumber,
             seats,
+            seatsVisiblity,
             date,
             startTime,
             endTime,
@@ -43,7 +55,7 @@ export const createShowtime = async (req: Request, res: Response) => {
 
         await updateMovieStatus(movieId)
 
-        res.status(201).send({message: `Showtime created successfully`})
+        res.status(201).send({message: `Showtime created successfully with id ${newShowtime._id}`})
     }
     catch{
         return res.status(500).send({message: `Server error while creating new showtime`})
@@ -63,11 +75,15 @@ export const deleteShowtime = async (req: Request, res: Response) => {
         const showtime = await Showtimes.findOne({_id: showtimeId})
         if(!showtime) return res.status(404).send({message: `Showtime not found`});
 
-        for(let i=0; i<showtime.rows; i++){
-            for(let j=0; j<showtime.columns; j++){
-                if(showtime.seats[i][j]) return res.status(400).send({message: `Cannot delete a showtime with confirmed bookings`});
-            }
-        }
+        // for(let i=0; i<showtime.rows; i++){
+        //     for(let j=0; j<showtime.columns; j++){
+        //         if(showtime.seats[i][j]) return res.status(400).send({message: `Cannot delete a showtime with confirmed bookings`});
+        //     }
+        // }
+
+        const canModify = await getShowtimeModifiable(showtimeId)
+        if(!canModify) return res.status(400).send({message: `Cannot delete a showtime with confirmed bookings`});
+
 
         // const showtime = await Showtimes.deleteOne({_id: showtimeId})
         const result = await Showtimes.deleteOne({_id: showtimeId})
@@ -87,18 +103,36 @@ export const replaceShowtime = async (req: Request, res: Response) => {
     
     try{
         const showtimeId = req.query.showtimeId
-        const {movieId, hallNumber, date, startTime, endTime, ticketPrice, rows, columns} = req.body
+        const {movieId, hallNumber, date, startTime, endTime, ticketPrice, rows, columns, unavailableSeats} = req.body
+
+
+        
 
         // let seats: boolean[][] = maxSeatsArr
         let seats: boolean[][] = Array.from({ length: 26 }, () => 
-            Array(10).fill(false)
+          Array(10).fill(false)
+        );
+        let seatsVisiblity: boolean[][] = Array.from({ length: 26 }, () => 
+          Array(10).fill(true)
         );
 
-
         for(let i=rows; i<26; i++){
-            for(let j=columns; j<10; j++){
-                seats[i][j] = true;
+            for(let j=0; j<10; j++){
+                // seats[i][j] = true;
+                seatsVisiblity[i][j] = false;
             }
+        }
+
+        for(let i=columns; i<10; i++){
+            for(let j=0; j<26; j++){
+                // seats[j][i] = true;
+                seatsVisiblity[j][i] = false;
+            }
+        }
+
+        for(let i=0; i<unavailableSeats.length; i++){
+            const seat = unavailableSeats[i]
+            seatsVisiblity[seat.charCodeAt(0) - 65][Number(seat[1]) - 1] = false
         }
 
 
@@ -106,10 +140,21 @@ export const replaceShowtime = async (req: Request, res: Response) => {
 
         if(!showtime) return res.status(404).send({message: `Showtime not found`});
 
+
+        const canModify = await getShowtimeModifiable(showtimeId)
+        if(!canModify) return res.status(400).send({message: `Cannot edit a showtime with confirmed bookings`});
+
+        // for(let i=0; i<showtime.rows; i++){
+            // for(let j=0; j<showtime.columns; j++){
+                // if(showtime.seats[i][j]) return res.status(400).send({message: `Cannot edit a showtime with confirmed bookings`});
+            // }
+        // }
+
         showtime.movieId = movieId
         showtime.hallNumber = hallNumber
         // showtime.seats = seats
         showtime.set('seats', seats)
+        showtime.set('seatsVisiblity', seatsVisiblity)
         showtime.date = date
         showtime.startTime = startTime
         showtime.endTime = endTime
@@ -156,5 +201,43 @@ export const browseShowtimes = async (req: Request, res: Response) => {
     }
     catch {
         res.status(500).send({ message: `Server error while fetching showtimes` });
+    }
+}
+
+export const updateTicketPrice = async (req: Request, res: Response) => {
+    const showtimeId = req.query.showtimeId
+    const ticketPrice = req.body.ticketPrice
+    try {
+        if (ticketPrice === undefined || ticketPrice < 0) {
+            return res.status(400).send({ message: `Invalid ticket price` });
+        }
+
+        const UpdatedShowtime = await Showtimes.findByIdAndUpdate(
+            showtimeId,
+            { ticketPrice: ticketPrice },
+            { returnDocument: "after" }
+        );
+
+        if (!UpdatedShowtime) {
+            return res.status(404).send({ message: `Showtime not found` });
+        }
+        res.status(200).send({ 
+            message: `Showtime updated successfully`,
+            data: UpdatedShowtime
+        });
+
+    }
+    catch {
+        res.status(500).send({ message: `Server error while updating showtime` });
+    }
+}
+
+export const getallShowtimes = async (req: Request, res: Response) => {
+    try {
+        const showtimes = await Showtimes.find().populate("movie", "title posterUrl duration rating");
+        res.status(200).json(showtimes);
+    }
+    catch {
+        res.status(500).json({ message: `Server error while fetching showtimes` });
     }
 }

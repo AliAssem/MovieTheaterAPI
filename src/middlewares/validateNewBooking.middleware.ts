@@ -25,13 +25,13 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
     }
     //check if user exists and is a customer 
     const CurrentUser = await Users.findById(customerId)
-    if (CurrentUser == null || CurrentUser.role != "Customer"){
-        return res.status(400).json({ error: 'Customer does not exist' });
-    }
+    // if (CurrentUser == null || CurrentUser.role != "Customer"){
+        // return res.status(400).json({ error: 'Customer does not exist' });
+    // }
     //check if showtime exists
     const showtime = await Showtimes.findById(showtimeId);
     if (!showtime) {
-        return res.status(400).json({ error: 'Showtime does not exist' });
+        return res.status(404).json({ error: 'Showtime not found' });
     }
     selectedSeats.sort()
     for(let i=0; i<selectedSeats.length; i++){
@@ -45,8 +45,11 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
         if(i>=1 && selectedSeats[i] ===selectedSeats[i-1]){
             return res.status(400).json({ error: 'Selected seats must be unique' });
         }
-        if(showtime.seats[selectedSeats[i][0].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - Number("0")]){
+        if(showtime.seats[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]){
             return res.status(400).json({ error: `Seat ${selectedSeats[i]} is already booked` });
+        }
+        if(!showtime.seatsVisiblity[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]){
+            return res.status(400).json({error: `Seat ${selectedSeats[i]} is unavailable`})
         }
     }
     const movie = await Movies.findById(showtime.movieId) as any;

@@ -12,8 +12,11 @@ Showtime:
 import mongoose from "mongoose";
 
 
-export const maxSeatsArr: boolean[][] = Array.from({ length: 26 }, () => 
+const maxSeatsArr: boolean[][] = Array.from({ length: 26 }, () => 
   Array(10).fill(false)
+);
+const maxSeatVisArr: boolean[][] = Array.from({ length: 26 }, () => 
+  Array(10).fill(true)
 );
 
 
@@ -21,6 +24,7 @@ export interface Showtime {
     movieId: mongoose.Schema.Types.ObjectId;
     hallNumber: Number;
     seats: boolean[][];
+    seatsVisiblity: boolean[][];
     date: Date;
     startTime: Date;
     endTime: Date;
@@ -33,6 +37,7 @@ export const showtimeSchema = new mongoose.Schema({
     movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie", required: true },
     hallNumber: { type: Number, required: true },
     seats: { type: [[Boolean]], default: maxSeatsArr },
+    seatsVisiblity: { type: [[Boolean]], default: maxSeatVisArr },
     date: { type: Date, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
