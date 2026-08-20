@@ -203,3 +203,41 @@ export const browseShowtimes = async (req: Request, res: Response) => {
         res.status(500).send({ message: `Server error while fetching showtimes` });
     }
 }
+
+export const updateTicketPrice = async (req: Request, res: Response) => {
+    const showtimeId = req.query.showtimeId
+    const ticketPrice = req.body.ticketPrice
+    try {
+        if (ticketPrice === undefined || ticketPrice < 0) {
+            return res.status(400).send({ message: `Invalid ticket price` });
+        }
+
+        const UpdatedShowtime = await Showtimes.findByIdAndUpdate(
+            showtimeId,
+            { ticketPrice: ticketPrice },
+            { returnDocument: "after" }
+        );
+
+        if (!UpdatedShowtime) {
+            return res.status(404).send({ message: `Showtime not found` });
+        }
+        res.status(200).send({ 
+            message: `Showtime updated successfully`,
+            data: UpdatedShowtime
+        });
+
+    }
+    catch {
+        res.status(500).send({ message: `Server error while updating showtime` });
+    }
+}
+
+export const getallShowtimes = async (req: Request, res: Response) => {
+    try {
+        const showtimes = await Showtimes.find().populate("movie", "title posterUrl duration rating");
+        res.status(200).json(showtimes);
+    }
+    catch {
+        res.status(500).json({ message: `Server error while fetching showtimes` });
+    }
+}
