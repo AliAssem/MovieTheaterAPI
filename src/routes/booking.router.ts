@@ -3,12 +3,11 @@ import {
   createBooking, 
   getBookingHistory, 
   cancelBooking, 
-  getfreeSeats,
-  postFeedback,
+  postFeedback
 } from "../controllers/Customers.controller";
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
-import { validateCancelBooking, validateShowtimeId, validateNewBooking, validatefeedback } from "../middlewares/validateNewBooking.middleware";
+import { validateCancelBooking, validateNewBooking, validatefeedback } from "../middlewares/validateNewBooking.middleware";
 import { logger } from "../middlewares/logger.middleware";
 const router = Router()
 

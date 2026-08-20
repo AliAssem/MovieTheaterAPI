@@ -47,7 +47,7 @@ export const userLogin = async (req: Request, res: Response) => {
         const user = await Users.findOne({email: email})
 
         if(!user){
-            return res.status(401).send({message: `Email not linked to a valid account`})
+            return res.status(404).send({message: `Email not linked to a valid account`})
         }
 
 
@@ -63,7 +63,7 @@ export const userLogin = async (req: Request, res: Response) => {
             { expiresIn: JWT_EXPIRES_IN }
         );
 
-        res.status(201).send({message: `Successfull login`, token})
+        res.status(200).send({message: `Successfull login`, token})
     }
     catch{
         return res.status(500).send({message: `Server error while logging in`})

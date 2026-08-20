@@ -4,7 +4,7 @@ import { authenticate, requireRole } from "../middlewares/AuthMiddleware";
 import { validateNewShowtime } from "../middlewares/validateNewShowtime.middleware";
 import { createShowtime, deleteShowtime } from "../controllers/showtime.controller";
 import { validateShowtimeId } from "../middlewares/validateNewBooking.middleware";
-import { getfreeSeats } from "../controllers/booking.controller";
+import { getfreeSeats } from "../controllers/Customers.controller";
 
 
 const router = Router()
