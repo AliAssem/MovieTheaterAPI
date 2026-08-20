@@ -23,10 +23,11 @@ Valid Password:
 
 export const validateUserSignup = (req: Request, res: Response, next: NextFunction) => {
 
-    const fullName:any = "Ahmed Mohamed"
-    const email:any = "ahmedmohamed@gmail.com"
-    let password:any = "password"
+    // const fullName:any = "Ahmed Mohamed"
+    // const email:any = "ahmedmohamed@gmail.com"
+    // let password:any = "password"
     // const role = "Role"       // users cant signup as admin? LATER
+    const { fullName, email, password } = req.body
 
     // Link variables above to request body LATER
 

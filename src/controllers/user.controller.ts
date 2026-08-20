@@ -7,23 +7,31 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN
 
 export const userSignup = async (req: Request, res: Response) => {
     try{
-        const {fullName, email, password, role} = req.body
+        const {fullName, email, password} = req.body
 
         const hashedPassword = await bcrypt.hash(password, 10)
-
-        const newUser = await Users.create({
-            fullName,
-            email,
-            role,
-            password: hashedPassword
-        })
 
         const existing = await Users.findOne({email: email})
         if(existing){
             return res.status(401).send({message: `Email is already linked to an account`})
         }
 
-        res.status(201).send({message: `New user created successfully`})
+
+        const newUser = await Users.create({
+            fullName,
+            email,
+            role: "Customer",
+            password: hashedPassword
+        })
+
+
+        const token = jwt.sign(
+            { id: newUser._id, role: "Customer" },
+            process.env.JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN }
+        );
+
+        res.status(201).send({message: `New user created successfully`, token})
 
     }
     catch{
@@ -50,7 +58,7 @@ export const userLogin = async (req: Request, res: Response) => {
         }
 
         const token = jwt.sign(
-            { id: user._id, role: "Customer" },
+            { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: JWT_EXPIRES_IN }
         );
