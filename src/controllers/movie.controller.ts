@@ -104,6 +104,23 @@ export const editMovie = async (req: Request, res: Response) => {
 }
 
 
+export const replaceMovie = async (req: Request, res: Response) => {
+    try{
+        const movieId = req.query.movieId
+        if(!movieId) return res.status(400).send({message: `'movieId' query is required`});
+
+        const newMovie = await Movies.findOneAndReplace({_id: movieId}, req.body, {returnDocument: 'after'})
+
+        if(!newMovie) return res.status(404).send({message: `Movie not found`});
+
+        res.status(200).send({message: `Movie replaced successfully`})
+    }
+    catch{
+        return res.status(500).send({message: `Server error while replacing movie`})
+    }
+}
+
+
 export const deleteMovie = async (req: Request, res: Response) => {
     const movieId = req.query.movieId
 

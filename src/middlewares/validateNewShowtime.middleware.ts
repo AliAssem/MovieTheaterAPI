@@ -25,3 +25,25 @@ export const validateNewShowtime = async (req: Request, res: Response, next: Nex
     next()
 
 }
+
+export const validateModifyShowtime = async (req: Request, res: Response, next: NextFunction) => {
+    const {hallNumber, date, startTime, endTime, ticketPrice} = req.body
+
+
+    if(hallNumber && (typeof hallNumber !== "number" || hallNumber <= 0)) return res.status(400).send({message: `'hallNumber' must be a positive number`});
+
+    if(date && (!(new Date(date).valueOf()))) return res.status(400).send({message: `'date' must be a valid Date eg. 2026/12/18`});
+    if(date && new Date(date).getMilliseconds() > Date.now()) return res.status(400).send({message: `'date' must be a future date`});
+
+    if(startTime && !(new Date(startTime).valueOf())) return res.status(400).send({message: `'startTime' must be a valid Date`});
+    if(endTime && !(new Date(endTime).valueOf())) return res.status(400).send({message: `'endTime' must be a valid Date`});
+    
+    if((startTime && endTime) && new Date(startTime).getTime() >= new Date(endTime).getTime()) return res.status(400).send({message: `'startTime' cannot be after 'endTime'`});
+
+    if(ticketPrice && (typeof ticketPrice !== "number" || ticketPrice < 0)) return res.status(400).send({message: `'ticketPrice' must be a positive number`});
+
+
+
+    next()
+
+}
