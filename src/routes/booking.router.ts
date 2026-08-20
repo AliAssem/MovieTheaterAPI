@@ -16,13 +16,11 @@ router.post("/", logger, authenticate, requireRole("Customer"), validateNewBooki
 
 router.get("/bookings-history", logger, authenticate, requireRole("Customer"), getBookingHistory);
 
-
-
-router.post("/feedback",authenticate, requireRole("Customer"),validatefeedback,postFeedback)
+router.patch("/cancel/:bookingId", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
 router.post("/confirm", authenticate, requireRole("Cinema Admin"), confirmBookingPayment)
 
-router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
+// router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
 
 

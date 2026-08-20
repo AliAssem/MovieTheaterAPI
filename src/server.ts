@@ -1,10 +1,10 @@
+import { connectDB }    from "./config/db";
 import express, { Application } from "express";
 
 const app: Application = express();
 
 
 import "dotenv/config"
-import { connectDB }    from "./config/db";
 import { setupSwagger } from "./config/swagger";
 
 import movieRouter    from "./routes/movie.router"
@@ -25,7 +25,13 @@ app.use("/showtimes",   showtimeRouter)
 app.use("/bookings",    bookingRouter)
 
 
-
+// Catch-all 404 Handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    status: "fail",
+    message: `Cannot find route: ${req.originalUrl} on this server!`
+  });
+});
 connectDB().then(()=> {
     app.listen(PORT, ()=> {
         console.log(`Server running on port ${PORT}`)

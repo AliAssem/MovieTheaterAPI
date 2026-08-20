@@ -25,7 +25,12 @@ import { validateNewMovie } from "../middlewares/validateNewMovie.middleware";
 
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";
 import { logger } from "../middlewares/logger.middleware";
-
+import {
+  postFeedback,
+  addfavorite,
+  getfavorite
+} from "../controllers/Customers.controller";
+import { validatefeedback } from "../middlewares/validateNewBooking.middleware";
 const router = Router();
 
 /**
@@ -170,4 +175,8 @@ router.put("/replace", logger, authenticate, requireRole("Cinema Admin"), valida
 router.patch("/edit", logger, authenticate, requireRole("Cinema Admin"), editMovie);
 router.delete("/delete", logger, authenticate, requireRole("Cinema Admin"), deleteMovie);
 
+router.post("/feedback",authenticate, requireRole("Customer"),validatefeedback,postFeedback)
+
+router.post("/addFavorite/:movieId", authenticate, requireRole("Customer"), addfavorite);
+router.get("/favorite", authenticate, requireRole("Customer"), getfavorite);
 export default router;

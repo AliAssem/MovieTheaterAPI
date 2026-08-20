@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Bookings } from "../models/booking.model";
 import { Showtimes } from "../models/showtime.model";
 import { Users } from "../models/user.model";
-import { Movies } from "../models/movie.model";
+import { Movie, Movies } from "../models/movie.model";
 import { AuthRequest } from "../middlewares/AuthMiddleware";
 export const createBooking = async (req: Request, res: Response) => {
     
@@ -63,9 +63,9 @@ export const getBookingHistory = async (req: Request, res: Response) => {
     try {
         const customerId = (req as any).user.id;
         const user = await Users.findById(customerId)
-        if(!user) return res.status(404).send({message: `User not found`});
-
-        res.status(200).json({ message: 'Booking history retrieved successfully', history: user.history });
+        if(user?.history?.length===0)
+        return res.status(200).json({ message: 'Booking history retrieved successfully but it is empty'});    
+        res.status(200).json({ message: 'Booking history retrieved successfully', history: user?.history });
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving booking history' });
     }
@@ -117,8 +117,60 @@ export const postFeedback = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error submitting feedback' });
     }
 }
+const browseShowtimes = async (req: Request, res: Response) => {
+    try{
+        const { movieId, date, hallNumber } = req.query;
+        let filterQuery: any = {};
 
 
+        if (movieId) filterQuery.movie = movieId;
+        
+        if (date) filterQuery.date = date;
+
+        if (hallNumber) filterQuery.hallNumber = hallNumber;
+
+        const showtimes = await Showtimes.find(filterQuery).populate("movie", "title posterUrl duration rating");
+
+        res.status(200).send(showtimes);
+    } catch {
+        res.status(500).send({ message: "Server error while fetching showtimes" });
+    }
+}
+export const addfavorite= async (req: Request, res: Response) =>{
+   try{
+    const customerId = (req as any).user.id;
+    const {movieId}=req.params
+    const movie=await Movies.findById(movieId)
+    if(!movie)
+        return res.status(400).json({ message: "Movie not found" })
+    const updateduser=await Users.findByIdAndUpdate(customerId, { $addToSet: { favorite: movieId } },
+      { new: true }
+    );
+
+    res.status(200).json({message: "Movie added to favorites successfully",favorite:updateduser!.favorite!}) 
+}
+catch(error){
+    return res.status(500).json({ error: "Error adding movie to favorites" });
+}
+}
+
+export const getfavorite= async (req:Request,res:Response)=>{
+    try{
+    let favoriteArray:Movie[]=[]
+    const customerId = (req as any).user.id;
+    const user = await Users.findById(customerId)
+    for(let i=0;i<user!.favorite!.length;i++){
+        const favMovie= await Movies.findById(user?.favorite[i]);
+        favoriteArray.push(favMovie!)
+    }
+    if(favoriteArray.length===0)
+        return res.status(200).json("Favorite list is empty")
+     return res.status(200).json(favoriteArray)
+    }
+    catch{
+    return res.status(500).json({ error: "Error adding movie to favorites" });
+    }
+}
 
 export const getShowtimeModifiable = async (showtimeId: any) => {
     try{
