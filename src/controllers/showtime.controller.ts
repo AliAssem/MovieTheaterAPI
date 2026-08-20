@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
-import { Showtimes, showtimeSchema, Showtime } from "../models/showtime.model"
+import { Showtimes } from "../models/showtime.model"
+import { updateMovieStatus } from "./movie.controller";
 
 
 export const createShowtime = async (req: Request, res: Response) => {
@@ -13,10 +14,18 @@ export const createShowtime = async (req: Request, res: Response) => {
         );
 
         for(let i=rows; i<26; i++){
-            for(let j=columns; j<10; j++){
+            for(let j=0; j<10; j++){
                 seats[i][j] = true;
             }
         }
+
+        for(let i=columns; i<10; i++){
+            for(let j=0; j<26; j++){
+                seats[j][i] = true;
+            }
+        }
+
+        
 
 
         await Showtimes.create({
@@ -31,6 +40,8 @@ export const createShowtime = async (req: Request, res: Response) => {
             columns
         })
 
+
+        await updateMovieStatus(movieId)
 
         res.status(201).send({message: `Showtime created successfully`})
     }

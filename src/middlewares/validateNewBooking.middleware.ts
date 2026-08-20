@@ -6,11 +6,12 @@ import { Showtimes } from '../models/showtime.model';
 import {Movies} from '../models/movie.model';
 import { Bookings } from '../models/booking.model';
 export const validateNewBooking = async (req: Request, res: Response, next: NextFunction) => {
-    const customerId = (req as any).user.Id;
+    const customerId = (req as any).user.id;
     const { showtimeId, selectedSeats } = req.body;
     const bookingStatus = "Pending";    
     // check missing fields
     if (!customerId || !showtimeId || !selectedSeats || !bookingStatus) {
+        if(!customerId) console.log("ERR")
         return res.status(400).json({ error: 'All fields are required' });
     }
     // Validate booking status

@@ -22,7 +22,7 @@ const emailAllowedCharacters:any[] = [
     'L','M','N','O','P','Q','R','S','T','U','V',
     'W','X','Y','Z',
 
-    '@','_'
+    '@','_', '.'
 ]
 
 /*
@@ -60,7 +60,8 @@ export const validateUserSignup = (req: Request, res: Response, next: NextFuncti
         return res.status(400).send({message: `provided email is not a valid email "example@provider.com"`})
     }
     for (let idx = 0; idx < email.length; idx++) {
-        if(!emailAllowedCharacters.includes(email[idx])) return res.status(400).send({message: `Email contains invalid characters`});
+        const element = email[idx]
+        if(!emailAllowedCharacters.includes(element)) return res.status(400).send({message: `Email contains invalid character ${element}`});
     }
     // Add validation for ' ' and any non valid character of an email LATER
 

@@ -7,14 +7,14 @@ import { AuthRequest } from "../middlewares/AuthMiddleware";
 export const createBooking = async (req: Request, res: Response) => {
     
     try {
-        const customerId = (req as any).user.Id;
+        const customerId = (req as any).user.id;
         const {  showtimeId, selectedSeats } = req.body;
         const bookingStatus = "Pending"; 
         const showtime = await Showtimes.findById(showtimeId);
         const totalPrice = selectedSeats.length * showtime!.ticketPrice;
         selectedSeats.sort()
         for(let i=0; i<selectedSeats.length; i++){
-            showtime!.seats[selectedSeats[i][0].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - Number("0")] = true;
+            showtime!.seats[selectedSeats[i][0].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1] = true;
         }
         await showtime?.save()
         const newBooking = await Bookings.create({
