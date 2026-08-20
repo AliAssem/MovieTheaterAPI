@@ -20,5 +20,8 @@ router.patch("/cancel/:bookingId", logger, authenticate, requireRole("Customer")
 
 router.post("/confirm", authenticate, requireRole("Cinema Admin"), confirmBookingPayment)
 
+// router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
+
+
 
 export default router

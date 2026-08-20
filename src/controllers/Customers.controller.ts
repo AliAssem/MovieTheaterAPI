@@ -80,7 +80,7 @@ export const getfreeSeats = async (req: Request, res: Response) => {
         const freeSeats = [];
         for (let i = 0; i < showtime.rows; i++) {
             for (let j = 0; j < showtime.columns; j++) {
-                if (!showtime!.seats[i][j] && showtime.seats[i][j]) {
+                if (!showtime!.seats[i][j] && showtime.seatsVisiblity[i][j]) {
                     freeSeats.push(`${String.fromCharCode(65 + i)}${j + 1}`);
                 }
             }
@@ -174,9 +174,8 @@ export const getfavorite= async (req:Request,res:Response)=>{
 
 export const getShowtimeModifiable = async (showtimeId: any) => {
     try{
-        const bookings = await Bookings.find({showtime: showtimeId, bookingStatus: "Confirmed"})
-        if(bookings === undefined) return false;
-        return (bookings.length > 0)
+        const bookings = await Bookings.countDocuments({showtime: showtimeId, bookingStatus: "Confirmed"})
+        return (bookings == 0)
     }
     catch{
         console.log(`Server error while getting showtime modifiability for showtime ${showtimeId}`)

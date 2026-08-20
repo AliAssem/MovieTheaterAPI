@@ -31,9 +31,11 @@ export const createShowtime = async (req: Request, res: Response) => {
             }
         }
 
-        for(let i=0; i<unavailableSeats.length; i++){
-            const seat = unavailableSeats[i]
-            seatsVisiblity[seat.charCodeAt(0) - 65][Number(seat[1]) - 1] = false
+        if(unavailableSeats){
+            for(let i=0; i<unavailableSeats.length; i++){
+                const seat = unavailableSeats[i]
+                seatsVisiblity[seat.charCodeAt(0) - 65][Number(seat[1]) - 1] = false
+            }
         }
 
         
@@ -184,6 +186,51 @@ export const replaceShowtime = async (req: Request, res: Response) => {
 }
 
 
+export const modifyShowtime = async (req: Request, res: Response) => {
+    try{
+        const showtimeId = req.query.showtimeId
+        const {movieId, hallNumber, date, startTime, endTime, ticketPrice} = req.body
+
+        const canModify = await getShowtimeModifiable(showtimeId)
+        if(!canModify) return res.status(400).send({message: `Cannot modify a showtime with confirmed bookings`});
+
+        const showtime = await Showtimes.findById(showtimeId)
+
+        if(!showtime) return res.status(404).send({message: `Showtime not found`});
+
+
+
+
+        let modifications:any = {}
+
+        if (movieId)     showtime.movieId = movieId;
+        if (hallNumber)  showtime.hallNumber = hallNumber;
+        if (date)        showtime.date = date;
+        if (startTime)   showtime.startTime = startTime;
+        if (endTime)     showtime.endTime = endTime;
+        if (ticketPrice) showtime.ticketPrice = ticketPrice;
+        // if(rows) modifications.rows = rows;
+        // if(columns) modifications.columns = columns;
+        // if(unavailableSeats) modifications.unavailableSeats = unavailableSeats
+        // if(unavailableSeats){
+        //     for(let i=0; i<unavailableSeats.length; i++){
+        //         if(showtime.seats[ unavailableSeats[i].charCodeAt(0) - 65 ][ Number(unavailableSeats[i][1]) - 1]){ // seat was booked as Pending
+        //             const booking = await 
+        //         }
+        //     }
+        // }
+
+        // await showtime.updateOne(modifications)
+        await showtime.save()
+        // showtime.save()
+        res.status(200).send({message: `Showtime modified successfully`})
+    }
+    catch{
+        res.status(500).send({message: `Server error while modifying showtime`})
+    }
+
+}
+
 export const browseShowtimes = async (req: Request, res: Response) => {
     try{
         const { movieId, date, hallNumber } = req.query;
@@ -234,7 +281,7 @@ export const updateTicketPrice = async (req: Request, res: Response) => {
 
 export const getallShowtimes = async (req: Request, res: Response) => {
     try {
-        const showtimes = await Showtimes.find().populate("movie", "title posterUrl duration rating");
+        const showtimes = await Showtimes.find().populate("movieId", "title");
         res.status(200).json(showtimes);
     }
     catch {

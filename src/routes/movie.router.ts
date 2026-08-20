@@ -13,7 +13,12 @@ import { Router } from "express";
 
 
 import {
-      addMovie, deleteMovie, editMovie, getAllMovies, searchMovies
+      addMovie,
+      deleteMovie,
+      editMovie,
+      getAllMovies,
+      replaceMovie,
+      searchMovies
 } from "../controllers/movie.controller";
 import { validateNewMovie } from "../middlewares/validateNewMovie.middleware";
 
@@ -166,7 +171,7 @@ router.get("/search", logger, authenticate, searchMovies)
  *         description: Server error
  */
 router.post("/add", logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, addMovie);
-// router.put("/edit", /*authenticate, authorize("Cinema Admin"),*/ editMovie);               add /movies/replace LATER
+router.put("/replace", logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, replaceMovie);
 router.patch("/edit", logger, authenticate, requireRole("Cinema Admin"), editMovie);
 router.delete("/delete", logger, authenticate, requireRole("Cinema Admin"), deleteMovie);
 
