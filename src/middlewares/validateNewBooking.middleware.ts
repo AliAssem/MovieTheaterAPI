@@ -81,7 +81,7 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     }
 
     const showDateTime = new Date(showtime.date);
-    showDateTime.setMinutes(showDateTime.getMinutes() + showtime.startTime);
+    showDateTime.setMinutes(showDateTime.getMinutes() + Number(showtime.startTime));
 
     if (Date.now() >= showDateTime.getTime()) {
         return res.status(400).json({ error: 'Cannot cancel a booking after the showtime has started' });
@@ -97,5 +97,33 @@ export const validateShowtimeId = async (req: Request, res: Response, next: Next
     if (!showtimeId) {
         return res.status(400).json({ error: 'Showtime ID is required' });
     }
+    if (!await Showtimes.findById(showtimeId)) {
+        return res.status(404).json({ error: 'Showtime not found' });
+    }
     next();
 };
+export const validatefeedback=async(req:Request,res:Response,next:NextFunction)=>{
+    const customerId = (req as any).user.Id;
+    const { showtimeId, feedback, rate } = req.body;
+    if(!showtimeId||!feedback||!rate){
+         return res.status(400).json({ error: 'All fields are required' });
+    }
+    const showtime=await Showtimes.findById(showtimeId)
+    if(!showtime){
+        return res.status(400).json({ error: 'Showtime does not exist' });
+    }
+    const showDateTime = new Date(showtime.date);
+    if(Date.now() < showDateTime.getTime()){
+        return res.status(400).json({ error: 'Cannot let feedback before the show ends' });
+    }
+    if(rate<0||rate>10)
+        return res.status(400).json({ error: 'rate must be between 0-10' });
+    const user=await Users.findById(customerId)
+    if(user?.role!=="Customer")
+        return res.status(400).json({ error: 'Only customers can let feedback' });
+   const hasWatched = user?.history?.find((record: any) => record.showtimeId.toString() === showtimeId);
+    if (!hasWatched) {
+        return res.status(400).json({ error: 'You cannot rate a movie you did not watch' });
+    }
+ next();
+}

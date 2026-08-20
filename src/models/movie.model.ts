@@ -24,6 +24,11 @@ export interface Movie {
     ratingCount: number;
     releaseDate: Date;
     status: "Now Showing" | "Coming Soon";
+    feedback: [{
+        customer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        feedback: { type: String },
+        rate: { type: Number }
+    }]
 }
 export const movieSchema = new mongoose.Schema<Movie>({
     title:       { type: String, required: true },
@@ -35,7 +40,12 @@ export const movieSchema = new mongoose.Schema<Movie>({
     ratingSum:   { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
     releaseDate: { type: Date,   required: false },
-    status:      { type:String, enum: ["Now Showing", "Coming Soon"], required: true }
+    status:      { type:String, enum: ["Now Showing", "Coming Soon"], required: true },
+    feedback: [{
+        customer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        feedback: { type: String },
+        rate: { type: Number }
+    }]
 });
 export const Movies  = mongoose.model("Movie", movieSchema);
 
