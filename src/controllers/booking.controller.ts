@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Bookings } from "../models/booking.model";
 import { Showtimes } from "../models/showtime.model";
 import { Users } from "../models/user.model";
+import { AuthRequest } from "../middlewares/AuthMiddleware";
 export const createBooking = async (req: Request, res: Response) => {
     
     try {
@@ -32,13 +33,16 @@ export const createBooking = async (req: Request, res: Response) => {
     }
 }
 
-export const cancelBooking = async (req: Request, res: Response) => {
+export const cancelBooking = async (req: AuthRequest, res: Response) => {
     try {
         const bookingId = req.body.bookingId;
         const booking = await Bookings.findById(bookingId);
         if (!booking) {
             return res.status(404).json({ error: 'Booking not found' });
         }
+
+        if(req.user.id !== booking.customer) return res.status(403).send({message: `Forbidden: cannot cancel another customers booking`});
+
         const showtime = await Showtimes.findById(booking.showtime);
         if (!showtime) {
             return res.status(404).json({ error: 'Showtime not found' });
@@ -67,9 +71,12 @@ export const getfreeSeats = async (req: Request, res: Response) => {
     try {
         const showtimeId = req.params.showtimeId;
         const showtime = await Showtimes.findById(showtimeId);
+
+        if(!showtime) return res.status(404).send({message: `Showtime not found`});
+
         const freeSeats = [];
-        for (let i = 0; i < 26; i++) {
-            for (let j = 0; j < 10; j++) {
+        for (let i = 0; i < showtime.rows; i++) {
+            for (let j = 0; j < showtime.columns; j++) {
                 if (!showtime!.seats[i][j]) {
                     freeSeats.push(`${String.fromCharCode(65 + i)}${j + 1}`);
                 }

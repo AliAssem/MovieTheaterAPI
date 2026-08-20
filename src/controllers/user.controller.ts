@@ -69,3 +69,19 @@ export const userLogin = async (req: Request, res: Response) => {
         return res.status(500).send({message: `Server error while logging in`})
     }
 }
+
+export const promoteUser = async (req: Request, res: Response) => {
+    try{
+        const userId = req.query.userId
+        const role = req.query.role
+
+        const user = await Users.findOneAndUpdate({_id: userId}, {role: role}, {returnDocument: 'after'})
+
+        if(!user) return res.status(404).send({message: `User not found`});
+
+        res.status(200).send({message: `User (${userId}) has been promoted to (${role})`})
+    }
+    catch{
+        return res.status(500).send({message: `Server error while promoting user`})
+    }
+}

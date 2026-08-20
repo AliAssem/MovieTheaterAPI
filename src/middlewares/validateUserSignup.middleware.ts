@@ -13,6 +13,18 @@ const specialCharacters:any[] = [
     ':',';',',','.','<','>','[',']'
 ]
 
+const emailAllowedCharacters:any[] = [
+    'a','b','c','d','e','f','g','h','i','j','k',
+    'l','m','n','o','p','q','r','s','t','u','v',
+    'w','x','y','z',
+    
+    'A','B','C','D','E','F','G','H','I','J','K',
+    'L','M','N','O','P','Q','R','S','T','U','V',
+    'W','X','Y','Z',
+
+    '@','_'
+]
+
 /*
 Valid Password:
     Length: (8 -> 20)
@@ -23,13 +35,8 @@ Valid Password:
 
 export const validateUserSignup = (req: Request, res: Response, next: NextFunction) => {
 
-    // const fullName:any = "Ahmed Mohamed"
-    // const email:any = "ahmedmohamed@gmail.com"
-    // let password:any = "password"
-    // const role = "Role"       // users cant signup as admin? LATER
     const { fullName, email, password } = req.body
 
-    // Link variables above to request body LATER
 
     // Full Name
     if(!fullName || typeof fullName !== "string" || fullName == ""){
@@ -51,6 +58,9 @@ export const validateUserSignup = (req: Request, res: Response, next: NextFuncti
     }
     if(emailFormatted[0] == ""){
         return res.status(400).send({message: `provided email is not a valid email "example@provider.com"`})
+    }
+    for (let idx = 0; idx < email.length; idx++) {
+        if(!emailAllowedCharacters.includes(email[idx])) return res.status(400).send({message: `Email contains invalid characters`});
     }
     // Add validation for ' ' and any non valid character of an email LATER
 
