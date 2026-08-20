@@ -45,7 +45,7 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
         if(i>=1 && selectedSeats[i] ===selectedSeats[i-1]){
             return res.status(400).json({ error: 'Selected seats must be unique' });
         }
-        if(showtime.seats[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]){
+        if(showtime.seats[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]===true){
             return res.status(400).json({ error: `Seat ${selectedSeats[i]} is already booked` });
         }
         if(!showtime.seatsVisiblity[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]){
@@ -68,7 +68,7 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     if (!bookingId) {
         return res.status(400).json({ error: 'Booking ID is required' });
     }
-    const current_user= await Users.findById((req as any).user.Id)
+    const current_user= await Users.findById((req as any).user.id)
     const booking = await Bookings.findById(bookingId);
     if (!current_user) {
     return res.status(401).json({ error: 'User not found' });

@@ -24,7 +24,7 @@ export const createBooking = async (req: Request, res: Response) => {
             totalPrice,
             bookingStatus
         });
-        await Users.findByIdAndUpdate(customerId, { $push: { history: { showtimeId, booked_seats: selectedSeats } } });
+        await Users.findByIdAndUpdate(customerId, { $push: { history: { _id: newBooking._id,showtimeId, booked_seats: selectedSeats } } });
         res.status(201).json({
             message: 'Booking created successfully',
             newBooking
@@ -36,7 +36,7 @@ export const createBooking = async (req: Request, res: Response) => {
 
 export const cancelBooking = async (req: AuthRequest, res: Response) => {
     try {
-        const bookingId = req.body.bookingId;
+        const bookingId = req.params.bookingId;
         const booking = await Bookings.findById(bookingId);
         if (!booking) {
             return res.status(404).json({ error: 'Booking not found' });
