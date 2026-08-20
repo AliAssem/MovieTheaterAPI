@@ -118,3 +118,20 @@ export const deleteMovie = async (req: Request, res: Response) => {
         res.status(500).send({message: `Server error while deleting a movie`})
     }
 }
+
+
+
+export const updateMovieStatus = async (movieId: any) => {
+    try{
+        const movie = await Movies.findById(movieId)
+        if(!movie || movie.status == "Now Showing") return;
+
+        
+        movie.status = "Now Showing"
+        await movie.save()
+    }
+    catch{
+        console.log(`Error occured while updating movie status for movie ${movieId}`)
+        return
+    }
+}

@@ -3,11 +3,11 @@ import {
   createBooking, 
   getBookingHistory, 
   cancelBooking, 
-  getfreeSeats
-} from "../controllers/booking.controller";
+  postFeedback
+} from "../controllers/Customers.controller";
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
-import { validateCancelBooking, validateShowtimeId, validateNewBooking } from "../middlewares/validateNewBooking.middleware";
+import { validateCancelBooking, validateNewBooking, validatefeedback } from "../middlewares/validateNewBooking.middleware";
 import { logger } from "../middlewares/logger.middleware";
 const router = Router()
 
@@ -17,9 +17,8 @@ router.get("/bookings-history", logger, authenticate, requireRole("Customer"), g
 
 router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
-router.get("/showtimes/:showtimeId/free-seats", logger, authenticate, requireRole("Customer"), validateShowtimeId, getfreeSeats);
 
-
+router.post("/feedback",authenticate, requireRole("Customer"),validatefeedback,postFeedback)
 
 
 

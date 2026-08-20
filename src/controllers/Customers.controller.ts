@@ -2,17 +2,19 @@ import { Request, Response } from "express";
 import { Bookings } from "../models/booking.model";
 import { Showtimes } from "../models/showtime.model";
 import { Users } from "../models/user.model";
+import { Movies } from "../models/movie.model";
+import { AuthRequest } from "../middlewares/AuthMiddleware";
 export const createBooking = async (req: Request, res: Response) => {
     
     try {
-        const customerId = (req as any).user.Id;
+        const customerId = (req as any).user.id;
         const {  showtimeId, selectedSeats } = req.body;
         const bookingStatus = "Pending"; 
         const showtime = await Showtimes.findById(showtimeId);
         const totalPrice = selectedSeats.length * showtime!.ticketPrice;
         selectedSeats.sort()
         for(let i=0; i<selectedSeats.length; i++){
-            showtime!.seats[selectedSeats[i][0].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - Number("0")] = true;
+            showtime!.seats[selectedSeats[i][0].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1] = true;
         }
         await showtime?.save()
         const newBooking = await Bookings.create({
@@ -32,13 +34,16 @@ export const createBooking = async (req: Request, res: Response) => {
     }
 }
 
-export const cancelBooking = async (req: Request, res: Response) => {
+export const cancelBooking = async (req: AuthRequest, res: Response) => {
     try {
         const bookingId = req.body.bookingId;
         const booking = await Bookings.findById(bookingId);
         if (!booking) {
             return res.status(404).json({ error: 'Booking not found' });
         }
+
+        if(req.user.id !== booking.customer) return res.status(403).send({message: `Forbidden: cannot cancel another customers booking`});
+
         const showtime = await Showtimes.findById(booking.showtime);
         if (!showtime) {
             return res.status(404).json({ error: 'Showtime not found' });
@@ -67,16 +72,47 @@ export const getfreeSeats = async (req: Request, res: Response) => {
     try {
         const showtimeId = req.params.showtimeId;
         const showtime = await Showtimes.findById(showtimeId);
+
+        if(!showtime) return res.status(404).send({message: `Showtime not found`});
+
         const freeSeats = [];
-        for (let i = 0; i < 26; i++) {
-            for (let j = 0; j < 10; j++) {
+        for (let i = 0; i < showtime.rows; i++) {
+            for (let j = 0; j < showtime.columns; j++) {
                 if (!showtime!.seats[i][j]) {
                     freeSeats.push(`${String.fromCharCode(65 + i)}${j + 1}`);
                 }
             }
         }
+        if(freeSeats.length === 0){
+            return res.status(404).json({ error: 'No free seats available for this showtime' });
+        }
+        else 
         res.status(200).json({ message: 'Free seats retrieved successfully', freeSeats });
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving free seats' });
     }
 }
+export const postFeedback = async (req: Request, res: Response) => {
+    try {
+        const customerId = (req as any).user.Id;
+        const { showtimeId, feedback, rate } = req.body;
+        const user = await Users.findById(customerId);
+        const showtime = await Showtimes.findById(showtimeId);
+        const movie = await Movies.findById(showtime?.movieId);
+        movie!.ratingSum += rate;
+        movie!.ratingCount += 1;
+        movie!.rating = movie!.ratingSum / movie!.ratingCount;
+        await movie?.save();
+        user!.feedback!.push({ showtimeId, comment: feedback, rate });
+        await user!.save();
+      await Movies.findByIdAndUpdate(movie?._id, { 
+    $push: { 
+        feedback: { customer: customerId, feedback: feedback, rate }
+    } 
+});
+        res.status(200).json({ message: 'Feedback submitted successfully' });
+    }catch (error) {
+        res.status(500).json({ error: 'Error submitting feedback' });
+    }
+}
+
