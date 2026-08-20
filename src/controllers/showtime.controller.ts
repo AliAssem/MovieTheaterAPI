@@ -148,7 +148,7 @@ export const browseShowtimes = async (req: Request, res: Response) => {
     }
 }
 
-export const updateShowtime = async (req: Request, res: Response) => {
+export const updateTicketPrice = async (req: Request, res: Response) => {
     const showtimeId = req.query.showtimeId
     const ticketPrice = req.body.ticketPrice
     try {
