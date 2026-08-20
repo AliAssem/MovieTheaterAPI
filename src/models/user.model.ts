@@ -51,7 +51,8 @@ const userSchema = new mongoose.Schema({
       }
     ],
     required: false
-  }
+  },
+ favorite: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }]
 }, { collection: "users" });
 
 export const Users = mongoose.model("User", userSchema);

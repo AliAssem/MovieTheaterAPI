@@ -3,7 +3,6 @@ import {
   createBooking, 
   getBookingHistory, 
   cancelBooking, 
-  postFeedback
 } from "../controllers/Customers.controller";
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
@@ -15,10 +14,7 @@ router.post("/", logger, authenticate, requireRole("Customer"), validateNewBooki
 
 router.get("/bookings-history", logger, authenticate, requireRole("Customer"), getBookingHistory);
 
-router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
-
-
-router.post("/feedback",authenticate, requireRole("Customer"),validatefeedback,postFeedback)
+router.patch("/cancel/:bookingId", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
 
 
