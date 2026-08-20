@@ -7,7 +7,7 @@ Booking:
     Booking Status [Pending / Confirmed / Cancelled] // Done
 */
 import mongoose from "mongoose";
-import {Showtime} from "./showtime.model";
+import {Showtimes} from "./showtime.model";
 export type BookingStatus = "Pending" | "Confirmed" | "Cancelled";
 export interface Booking {
     customer: mongoose.Types.ObjectId;

@@ -49,6 +49,9 @@ export const validateUserSignup = (req: Request, res: Response, next: NextFuncti
     if(!validMailProviders.includes(emailFormatted[1])){
         return res.status(400).send({message: `Email provider is not a recognized provider`})
     }
+    if(emailFormatted[0] == ""){
+        return res.status(400).send({message: `provided email is not a valid email "example@provider.com"`})
+    }
     // Add validation for ' ' and any non valid character of an email LATER
 
 

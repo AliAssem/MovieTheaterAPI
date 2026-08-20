@@ -9,19 +9,37 @@ Showtime:
     Total Capacity [int]
 */
 
-const seatsArr: boolean[][] = Array.from({ length: 26 }, () => 
+import mongoose from "mongoose";
+
+
+export const maxSeatsArr: boolean[][] = Array.from({ length: 26 }, () => 
   Array(10).fill(false)
 );
-import mongoose from "mongoose";
+
+
+export interface Showtime {
+    movieId: mongoose.Schema.Types.ObjectId;
+    hallNumber: Number;
+    seats: boolean[][];
+    date: Date;
+    startTime: Date;
+    endTime: Date;
+    ticketPrice: Number;
+    rows: Number;
+    columns: Number;
+}
+
 export const showtimeSchema = new mongoose.Schema({
     movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie", required: true },
     hallNumber: { type: Number, required: true },
-    seats: { type: [[Boolean]], default: seatsArr },
+    seats: { type: [[Boolean]], default: maxSeatsArr },
     date: { type: Date, required: true },
-    startTime: { type: Number, required: true },
-    endTime: { type: Number, required: true },
+    startTime: { type: Date, required: true },
+    endTime: { type: Date, required: true },
     ticketPrice: { type: Number, required: true },
-    totalCapacity: { type: Number, required: true }
+    // totalCapacity: { type: Number, required: true }
+    rows: {type: Number, required: true},
+    columns: {type: Number, required: true}
 });
 
-export const Showtime = mongoose.model("Showtime", showtimeSchema);
+export const Showtimes = mongoose.model("Showtime", showtimeSchema);

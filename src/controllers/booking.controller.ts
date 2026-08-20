@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Bookings } from "../models/booking.model";
-import { Showtime } from "../models/showtime.model";
+import { Showtimes } from "../models/showtime.model";
 import { Users } from "../models/user.model";
 export const createBooking = async (req: Request, res: Response) => {
     
@@ -8,7 +8,7 @@ export const createBooking = async (req: Request, res: Response) => {
         const customerId = (req as any).user.Id;
         const {  showtimeId, selectedSeats } = req.body;
         const bookingStatus = "Pending"; 
-        const showtime = await Showtime.findById(showtimeId);
+        const showtime = await Showtimes.findById(showtimeId);
         const totalPrice = selectedSeats.length * showtime!.ticketPrice;
         selectedSeats.sort()
         for(let i=0; i<selectedSeats.length; i++){
@@ -39,7 +39,7 @@ export const cancelBooking = async (req: Request, res: Response) => {
         if (!booking) {
             return res.status(404).json({ error: 'Booking not found' });
         }
-        const showtime = await Showtime.findById(booking.showtime);
+        const showtime = await Showtimes.findById(booking.showtime);
         if (!showtime) {
             return res.status(404).json({ error: 'Showtime not found' });
         }
@@ -66,7 +66,7 @@ export const getBookingHistory = async (req: Request, res: Response) => {
 export const getfreeSeats = async (req: Request, res: Response) => {
     try {
         const showtimeId = req.params.showtimeId;
-        const showtime = await Showtime.findById(showtimeId);
+        const showtime = await Showtimes.findById(showtimeId);
         const freeSeats = [];
         for (let i = 0; i < 26; i++) {
             for (let j = 0; j < 10; j++) {

@@ -8,15 +8,16 @@ import {
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
 import { validateCancelBooking, validateShowtimeId, validateNewBooking } from "../middlewares/validateNewBooking.middleware";
+import { logger } from "../middlewares/logger.middleware";
 const router = Router()
 
-router.post("/", authenticate, requireRole("Customer"), validateNewBooking, createBooking);
+router.post("/", logger, authenticate, requireRole("Customer"), validateNewBooking, createBooking);
 
-router.get("/bookings-history", authenticate, requireRole("Customer"), getBookingHistory);
+router.get("/bookings-history", logger, authenticate, requireRole("Customer"), getBookingHistory);
 
-router.patch("/:bookingId/cancel", authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
+router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
-router.get("/showtimes/:showtimeId/free-seats", authenticate, requireRole("Customer"), validateShowtimeId, getfreeSeats);
+router.get("/showtimes/:showtimeId/free-seats", logger, authenticate, requireRole("Customer"), validateShowtimeId, getfreeSeats);
 
 
 
