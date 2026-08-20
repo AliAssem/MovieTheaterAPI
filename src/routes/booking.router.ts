@@ -3,7 +3,8 @@ import {
   createBooking, 
   getBookingHistory, 
   cancelBooking, 
-  postFeedback
+  postFeedback,
+  confirmBookingPayment
 } from "../controllers/Customers.controller";
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
@@ -20,6 +21,7 @@ router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer")
 
 router.post("/feedback",authenticate, requireRole("Customer"),validatefeedback,postFeedback)
 
+router.post("/confirm", authenticate, requireRole("Cinema Admin"), confirmBookingPayment)
 
 
 export default router

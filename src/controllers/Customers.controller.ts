@@ -61,9 +61,11 @@ export const cancelBooking = async (req: AuthRequest, res: Response) => {
 }
 export const getBookingHistory = async (req: Request, res: Response) => {
     try {
-        const customerId = (req as any).user.Id;
+        const customerId = (req as any).user.id;
         const user = await Users.findById(customerId)
-        res.status(200).json({ message: 'Booking history retrieved successfully', history: user?.history });
+        if(!user) return res.status(404).send({message: `User not found`});
+
+        res.status(200).json({ message: 'Booking history retrieved successfully', history: user.history });
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving booking history' });
     }
@@ -78,7 +80,7 @@ export const getfreeSeats = async (req: Request, res: Response) => {
         const freeSeats = [];
         for (let i = 0; i < showtime.rows; i++) {
             for (let j = 0; j < showtime.columns; j++) {
-                if (!showtime!.seats[i][j]) {
+                if (!showtime!.seats[i][j] && showtime.seats[i][j]) {
                     freeSeats.push(`${String.fromCharCode(65 + i)}${j + 1}`);
                 }
             }
@@ -116,3 +118,28 @@ export const postFeedback = async (req: Request, res: Response) => {
     }
 }
 
+
+
+export const getShowtimeModifiable = async (showtimeId: any) => {
+    try{
+        const bookings = await Bookings.find({showtime: showtimeId, bookingStatus: "Confirmed"})
+        if(bookings === undefined) return false;
+        return (bookings.length > 0)
+    }
+    catch{
+        console.log(`Server error while getting showtime modifiability for showtime ${showtimeId}`)
+    }
+}
+
+
+export const confirmBookingPayment = async (req: Request, res: Response) => {
+    const bookingId = req.query.bookingId
+    const booking = await Bookings.findById(bookingId)
+
+    if(!booking) return res.status(404).send({message: `Booking not found`});
+
+    booking.bookingStatus = "Confirmed"
+    await booking.save()
+
+    res.status(200).send({message: `Booking payment has been confirmed`})
+}
