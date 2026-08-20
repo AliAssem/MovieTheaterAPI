@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Bookings } from "../models/booking.model";
 import { Showtime } from "../models/showtime.model";
 import { Users } from "../models/user.model";
+import { Movies } from "../models/movie.model";
 export const createBooking = async (req: Request, res: Response) => {
     
     try {
@@ -75,8 +76,36 @@ export const getfreeSeats = async (req: Request, res: Response) => {
                 }
             }
         }
+        if(freeSeats.length === 0){
+            return res.status(404).json({ error: 'No free seats available for this showtime' });
+        }
+        else 
         res.status(200).json({ message: 'Free seats retrieved successfully', freeSeats });
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving free seats' });
     }
 }
+export const postFeedback = async (req: Request, res: Response) => {
+    try {
+        const customerId = (req as any).user.Id;
+        const { showtimeId, feedback, rate } = req.body;
+        const user = await Users.findById(customerId);
+        const showtime = await Showtime.findById(showtimeId);
+        const movie = await Movies.findById(showtime?.movieId);
+        movie!.ratingSum += rate;
+        movie!.ratingCount += 1;
+        movie!.rating = movie!.ratingSum / movie!.ratingCount;
+        await movie?.save();
+        user!.feedback!.push({ showtimeId, comment: feedback, rate });
+        await user!.save();
+      await Movies.findByIdAndUpdate(movie?._id, { 
+    $push: { 
+        feedback: { customer: customerId, feedback: feedback, rate }
+    } 
+});
+        res.status(200).json({ message: 'Feedback submitted successfully' });
+    }catch (error) {
+        res.status(500).json({ error: 'Error submitting feedback' });
+    }
+}
+

@@ -33,8 +33,23 @@ const userSchema = new mongoose.Schema({
     type: [ {movieId: {type: Number, required: true}} ],
     required: false
   },
-  history : {
-    type: [ {showtimeId: {type: Number, required: true}},{booked_seats: {type: [String], required: true}} ],
+ history : {
+    type: [
+      {
+        showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: "Showtime", required: true },
+        booked_seats: { type: [String], required: true }
+      }
+    ],
+    required: false
+  },
+  feedback: {
+    type: [
+      {
+        showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: "Showtime", required: true },
+        comment: { type: String, required: true },
+        rate: { type: Number, required: true }
+      }
+    ],
     required: false
   }
 }, { collection: "users" });
