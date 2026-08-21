@@ -7,10 +7,11 @@ const app: Application = express();
 import "dotenv/config"
 import { setupSwagger } from "./config/swagger";
 
-import movieRouter    from "./routes/movie.router"
-import userRouter     from "./routes/user.router"
-import showtimeRouter from "./routes/showtime.router"
-import bookingRouter  from "./routes/booking.router"
+import movieRouter     from "./routes/movie.router"
+import userRouter      from "./routes/user.router"
+import showtimeRouter  from "./routes/showtime.router"
+import bookingRouter   from "./routes/booking.router"
+import dashboardRouter from "./routes/dashboard.router"
 
 const PORT = process.env.PORT
 
@@ -23,15 +24,17 @@ app.use("/movies",      movieRouter)
 app.use("/users",       userRouter)
 app.use("/showtimes",   showtimeRouter)
 app.use("/bookings",    bookingRouter)
+app.use("/dashboard",   dashboardRouter)
 
 
-// Catch-all 404 Handler for undefined routes
 app.use((req, res) => {
   res.status(404).json({
     status: "fail",
     message: `Cannot find route: ${req.originalUrl} on this server!`
   });
 });
+
+
 connectDB().then(()=> {
     app.listen(PORT, ()=> {
         console.log(`Server running on port ${PORT}`)
