@@ -31,7 +31,7 @@ const router = Router()
 
 /**
  * @swagger
- * /api/v1/bookings:
+ * /bookings:
  *   post:
  *     summary: Create a new ticket booking
  *     tags: [Bookings]
@@ -72,7 +72,7 @@ router.post("/", logger, authenticate, requireRole("Customer"), validateNewBooki
 
 /**
  * @swagger
- * /api/v1/bookings/bookings-history:
+ * /bookings/bookings-history:
  *   get:
  *     summary: Retrieve user's booking history
  *     tags: [Bookings]
@@ -93,7 +93,7 @@ router.get("/bookings-history", logger, authenticate, requireRole("Customer"), g
 
 /**
  * @swagger
- * /api/v1/bookings/cancel/{bookingId}:
+ * /bookings/cancel/{bookingId}:
  *   patch:
  *     summary: Cancel a booking by ID
  *     tags: [Bookings]
@@ -125,7 +125,7 @@ router.patch("/cancel/:bookingId", logger, authenticate, requireRole("Customer")
 
 /**
  * @swagger
- * /api/v1/bookings/confirm:
+ * /bookings/confirm:
  *   post:
  *     summary: Confirm booking payment (Admin only)
  *     tags: [Bookings]
