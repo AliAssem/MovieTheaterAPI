@@ -107,7 +107,7 @@ export const validateShowtimeId = async (req: Request, res: Response, next: Next
     next();
 };
 export const validatefeedback=async(req:Request,res:Response,next:NextFunction)=>{
-    const customerId = (req as any).user.Id;
+    const customerId = (req as any).user.id;
     const { showtimeId, feedback, rate } = req.body;
     if(!showtimeId||!feedback||!rate){
          return res.status(400).json({ error: 'All fields are required' });
@@ -116,18 +116,26 @@ export const validatefeedback=async(req:Request,res:Response,next:NextFunction)=
     if(!showtime){
         return res.status(400).json({ error: 'Showtime does not exist' });
     }
-    const showDateTime = new Date(showtime.date);
-    if(Date.now() < showDateTime.getTime()){
-        return res.status(400).json({ error: 'Cannot let feedback before the show ends' });
+    // const showDateTime = new Date(showtime.endTime);
+    if(Date.now() < showtime.endTime.getTime()){
+        return res.status(400).json({ error: 'Cannot post feedback before the show ends' });
     }
-    if(rate<0||rate>10)
+    if(typeof rate !== "number" || rate<0 || rate>10)
         return res.status(400).json({ error: 'rate must be between 0-10' });
     const user=await Users.findById(customerId)
-    if(user?.role!=="Customer")
-        return res.status(400).json({ error: 'Only customers can let feedback' });
-   const hasWatched = user?.history?.find((record: any) => record.showtimeId.toString() === showtimeId);
-    if (!hasWatched) {
-        return res.status(400).json({ error: 'You cannot rate a movie you did not watch' });
+    if(!user) return res.status(404).send({error: `User not found`});
+    // if(user?.role!=="Customer")
+        // return res.status(400).json({ error: 'Only customers can let feedback' });
+//    const hasWatched = user?.history?.find((record: any) => record.showtimeId.toString() === showtimeId);
+    if(!user.history) return res.status(400).json({ error: 'You cannot rate a movie you did not watch' });
+    const haswatched = user.history.find((record: any) => record.showtimeId.toString() === showtimeId)
+    if (!haswatched) {
+        return res.status(400).json({ error: 'You cannot rate a movie you did not watch2' });
     }
+
+
+    if(user.feedback && user.feedback.find((fb: any) => fb.showtimeId.toString() === showtimeId))
+        return res.status(400).send({error: `Cannot post feedback more than once on the same showtime`});
+
  next();
 }

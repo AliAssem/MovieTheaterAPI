@@ -16,7 +16,7 @@ const maxSeatsArr: boolean[][] = Array.from({ length: 26 }, () =>
   Array(10).fill(false)
 );
 const maxSeatVisArr: boolean[][] = Array.from({ length: 26 }, () => 
-  Array(10).fill(false)
+  Array(10).fill(true)
 );
 
 
