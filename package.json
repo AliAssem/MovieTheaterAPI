@@ -2,10 +2,12 @@
   "name": "movietheaterapi",
   "version": "1.0.0",
   "description": "A summer training project for OSC Backend Development",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec tsx .\\src\\server.ts"
+    "dev": "nodemon --exec tsx ./src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -38,5 +40,10 @@
     "@types/swagger-ui-express": "^4.1.8",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
+  },
+
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src"
   }
 }

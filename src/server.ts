@@ -27,6 +27,10 @@ app.use("/bookings",    bookingRouter)
 app.use("/dashboard",   dashboardRouter)
 
 
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
+
 app.use((req, res) => {
   res.status(404).json({
     status: "fail",
