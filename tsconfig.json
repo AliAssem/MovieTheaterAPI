@@ -2,16 +2,18 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "target": "esnext",
+    "forceConsistentCasingInFileNames": true,
+    "target": "es2016",
     "types": ["node"],
+    "ignoreDeprecations": "6.0",
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
