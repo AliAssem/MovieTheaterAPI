@@ -29,10 +29,10 @@ const userSchema = new mongoose.Schema({
     enum: ["Customer", "Cinema Admin"],
     required: true
   },
-  favoriteMovies: {
-    type: [ {movieId: {type: Number, required: true}} ],
-    required: false
-  },
+  // favoriteMovies: {
+    // type: [ {movieId: {type: Number, required: true}} ],
+    // required: false
+  // },
  history : {
     type: [
       {
@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
     ],
     required: false
   },
- favorite: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }]
+ favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }]
 }, { collection: "users" });
 
 export const Users = mongoose.model("User", userSchema);

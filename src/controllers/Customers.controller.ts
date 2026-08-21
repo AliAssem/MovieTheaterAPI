@@ -96,7 +96,7 @@ export const getfreeSeats = async (req: Request, res: Response) => {
 }
 export const postFeedback = async (req: Request, res: Response) => {
     try {
-        const customerId = (req as any).user.Id;
+        const customerId = (req as any).user.id;
         const { showtimeId, feedback, rate } = req.body;
         const user = await Users.findById(customerId);
         const showtime = await Showtimes.findById(showtimeId);
@@ -142,12 +142,12 @@ export const addfavorite= async (req: Request, res: Response) =>{
     const {movieId}=req.params
     const movie=await Movies.findById(movieId)
     if(!movie)
-        return res.status(400).json({ message: "Movie not found" })
-    const updateduser=await Users.findByIdAndUpdate(customerId, { $addToSet: { favorite: movieId } },
+        return res.status(400).json({ message: "Movie not found" });
+    const updateduser=await Users.findByIdAndUpdate(customerId, { $addToSet: { favoriteMovies: movieId } },
       { new: true }
     );
 
-    res.status(200).json({message: "Movie added to favorites successfully",favorite:updateduser!.favorite!}) 
+    res.status(200).json({message: "Movie added to favorites successfully",favoriteMovies:updateduser!.favoriteMovies!}) 
 }
 catch(error){
     return res.status(500).json({ error: "Error adding movie to favorites" });
@@ -156,19 +156,19 @@ catch(error){
 
 export const getfavorite= async (req:Request,res:Response)=>{
     try{
-    let favoriteArray:Movie[]=[]
-    const customerId = (req as any).user.id;
-    const user = await Users.findById(customerId)
-    for(let i=0;i<user!.favorite!.length;i++){
-        const favMovie= await Movies.findById(user?.favorite[i]);
-        favoriteArray.push(favMovie!)
-    }
-    if(favoriteArray.length===0)
-        return res.status(200).json("Favorite list is empty")
-     return res.status(200).json(favoriteArray)
-    }
+        let favoriteArray:Movie[]=[]
+        const customerId = (req as any).user.id;
+        const user = await Users.findById(customerId)
+        for(let i=0;i<user!.favoriteMovies!.length;i++){
+            const favMovie= await Movies.findById(user?.favoriteMovies[i]);
+            favoriteArray.push(favMovie!)
+        }
+        if(favoriteArray.length===0)
+            return res.status(200).json("Favorite list is empty");
+        return res.status(200).json(favoriteArray)
+        }
     catch{
-    return res.status(500).json({ error: "Error adding movie to favorites" });
+        return res.status(500).json({ error: "Error adding movie to favorites" });
     }
 }
 
