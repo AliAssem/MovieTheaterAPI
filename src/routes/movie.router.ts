@@ -171,12 +171,197 @@ router.get("/search", logger, authenticate, searchMovies)
  *         description: Server error
  */
 router.post("/add",                  logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, addMovie);
+/**
+ * @swagger
+ * /movies/replace:
+ *   put:
+ *     tags: [Movies]
+ *     summary: Fully replace a movie by ID [ADMIN]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: movieId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the movie to replace
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               genre:
+ *                 type: string
+ *               duration:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               posterUrl:
+ *                 type: string
+ *               releaseDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Movie replaced successfully
+ *       404:
+ *         description: Movie not found
+ *       500:
+ *         description: Server error
+ */
+
 router.put("/replace",               logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, replaceMovie);
+/**
+ * @swagger
+ * /movies/edit:
+ *   patch:
+ *     tags: [Movies]
+ *     summary: Partially edit movie fields by ID [ADMIN]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: movieId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the movie to edit
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               genre:
+ *                 type: string
+ *               duration:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               posterUrl:
+ *                 type: string
+ *               releaseDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Movie updated successfully
+ *       404:
+ *         description: Movie not found
+ *       500:
+ *         description: Server error
+ */
+
 router.patch("/edit",                logger, authenticate, requireRole("Cinema Admin"), editMovie);
+/**
+ * @swagger
+ * /movies/delete:
+ *   delete:
+ *     tags: [Movies]
+ *     summary: Delete a movie by ID [ADMIN]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: movieId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the movie to delete
+ *     responses:
+ *       200:
+ *         description: Movie deleted successfully
+ *       404:
+ *         description: Movie ID not found
+ *       500:
+ *         description: Server error
+ */
+
 router.delete("/delete",             logger, authenticate, requireRole("Cinema Admin"), deleteMovie);
 
+/**
+ * @swagger
+ * /movies/feedback:
+ *   post:
+ *     tags: [Customers]
+ *     summary: Post rating and feedback for a movie [CUSTOMER]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - showtimeId
+ *               - feedback
+ *               - rate
+ *             properties:
+ *               showtimeId:
+ *                 type: string
+ *               feedback:
+ *                 type: string
+ *               rate:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Feedback submitted successfully
+ *       400:
+ *         description: Invalid input or missing fields
+ *       500:
+ *         description: Server error
+ */
+
 router.post("/feedback",             logger, authenticate, requireRole("Customer"), validatefeedback,postFeedback)
+/**
+ * @swagger
+ * /movies/addFavorite/{movieId}:
+ *   post:
+ *     tags: [Customers]
+ *     summary: Add a movie to customer favorite list [CUSTOMER]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: movieId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the movie to add to favorites
+ *     responses:
+ *       200:
+ *         description: Movie added to favorites
+ *       404:
+ *         description: User or Movie not found
+ *       500:
+ *         description: Server error
+ */
 
 router.post("/addFavorite/:movieId", logger, authenticate, requireRole("Customer"), addfavorite);
+/**
+ * @swagger
+ * /movies/favorite:
+ *   get:
+ *     tags: [Customers]
+ *     summary: Get user favorite movies [CUSTOMER]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched favorite movies
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/favorite",              logger, authenticate, requireRole("Customer"), getfavorite);
 export default router;
