@@ -143,7 +143,7 @@ export const addfavorite= async (req: Request, res: Response) =>{
     const movie=await Movies.findById(movieId)
     if(!movie)
         return res.status(400).json({ message: "Movie not found" });
-    const updateduser=await Users.findByIdAndUpdate(customerId, { $addToSet: { favoriteMovies: movieId } },
+    const updateduser=await Users.findByIdAndUpdate(customerId, { $push: { favoriteMovies: movieId } },
       { new: true }
     );
 

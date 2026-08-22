@@ -15,9 +15,9 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
         return res.status(400).json({ error: 'All fields are required' });
     }
     // Validate booking status
-    if (!['Pending', 'Confirmed', 'Cancelled'].includes(bookingStatus)) {
-        return res.status(400).json({ error: 'Invalid booking status' });
-    }
+    // if (!['Pending', 'Confirmed', 'Cancelled'].includes(bookingStatus)) {
+    //     return res.status(400).json({ error: 'Invalid booking status' });
+    // }
 
     // Validate selected seats
     if (!Array.isArray(selectedSeats) || selectedSeats.length === 0) {
@@ -45,7 +45,7 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
         if(i>=1 && selectedSeats[i] ===selectedSeats[i-1]){
             return res.status(400).json({ error: 'Selected seats must be unique' });
         }
-        if(showtime.seats[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]===true){
+        if(showtime.seats[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]){
             return res.status(400).json({ error: `Seat ${selectedSeats[i]} is already booked` });
         }
         if(!showtime.seatsVisiblity[selectedSeats[i].charCodeAt(0) - 65][Number(selectedSeats[i][1]) - 1]){
