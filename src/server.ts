@@ -28,6 +28,19 @@ app.use("/bookings",    bookingRouter)
 app.use("/dashboard",   dashboardRouter)
 
 
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     tags: [Other]
+ *     summary: Returns server health status
+ *     responses:
+ *       200:
+ *         description: OK
+ *       500:
+ *         description: Server error
+ */
 app.get("/health", logger, (req, res) => {
     res.status(200).json({ status: "ok" });
 });

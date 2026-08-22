@@ -12,8 +12,9 @@ const router = Router()
  * /users/signup:
  *   post:
  *     tags: [Account]
+ *     security:
+ *       - bearerAuth: []
  *     summary: Register a new account
- *     parameters:
  * 
  * 
  * 
@@ -51,6 +52,8 @@ router.post("/signup", logger, validateUserSignup, userSignup)
  * /users/login:
  *   post:
  *     tags: [Account]
+ *     security:
+ *       - bearerAuth: []
  *     summary: Login into an existing account
  *     requestBody:
  *       required: true
@@ -84,6 +87,8 @@ router.post("/login", logger, userLogin)
  * /users/promote:
  *   post:
  *     tags: [Account]
+ *     security:
+ *       - bearerAuth: []
  *     summary: Change an account's role [ADMIN]
  *     parameters:
  *       - in: query

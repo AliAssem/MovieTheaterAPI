@@ -7,8 +7,9 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN
 
 export const userSignup = async (req: Request, res: Response) => {
     try{
-        const {fullName, email, password} = req.body
-
+        const {fullName, password} = req.body
+        const email = req.body.email.toLowerCase()
+        
         const hashedPassword = await bcrypt.hash(password, 10)
 
         const existing = await Users.findOne({email: email})
@@ -42,7 +43,9 @@ export const userSignup = async (req: Request, res: Response) => {
 
 export const userLogin = async (req: Request, res: Response) => {
     try{
-        const {email, password} = req.body
+        const {password} = req.body
+
+        const email = req.body.email.toLowerCase()
 
         const user = await Users.findOne({email: email})
 

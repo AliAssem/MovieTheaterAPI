@@ -162,6 +162,23 @@ router.post("/confirm", logger, authenticate, requireRole("Cinema Admin"), confi
 
 // router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
+
+/**
+ * @swagger
+ * /bookings:
+ *   get:
+ *     tags: [Bookings]
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Returns all bookings in DB [Admin Only]
+ *     responses:
+ *       200:
+ *         description: Returns json of all bookings
+ *       401:
+ *         description: Unauthorized Access
+ *       500:
+ *         description: Server error
+ */
 router.get("/", logger, authenticate, requireRole("Cinema Admin"), getAllBookings)
 
 

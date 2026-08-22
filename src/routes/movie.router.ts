@@ -38,6 +38,8 @@ const router = Router();
  * /movies:
  *   get:
  *     tags: [Movies]
+ *     security:
+ *       - bearerAuth: []
  *     summary: Returns all movies in DB
  *     responses:
  *       200:
@@ -51,6 +53,8 @@ router.get("/", logger, authenticate, getAllMovies);
  * /movies/search:
  *   get:
  *     tags: [Movies]
+ *     security:
+ *       - bearerAuth: []
  *     summary: Search for a set of movies using filter queries
  *     parameters:
  *       - in: query
@@ -124,6 +128,8 @@ router.get("/search", logger, authenticate, searchMovies)
  * /movies/add:
  *   post:
  *     tags: [Movies]
+ *     security:
+ *       - bearerAuth: []
  *     summary: Add a new movie [ADMIN]
  * 
  * 

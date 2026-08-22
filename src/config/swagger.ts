@@ -17,7 +17,9 @@ const options = {
       }
     ]
   },
-  apis: ["./src/routes/*.ts"]
+  apis: ["./src/routes/*.ts",
+         "./src/server.ts"
+  ]
 };
 
 
