@@ -12,6 +12,7 @@ import userRouter      from "./routes/user.router"
 import showtimeRouter  from "./routes/showtime.router"
 import bookingRouter   from "./routes/booking.router"
 import dashboardRouter from "./routes/dashboard.router"
+import { logger } from "./middlewares/logger.middleware";
 
 const PORT = process.env.PORT
 
@@ -27,7 +28,7 @@ app.use("/bookings",    bookingRouter)
 app.use("/dashboard",   dashboardRouter)
 
 
-app.get("/health", (req, res) => {
+app.get("/health", logger, (req, res) => {
     res.status(200).json({ status: "ok" });
 });
 

@@ -3,8 +3,8 @@ import {
   createBooking, 
   getBookingHistory, 
   cancelBooking, 
-  postFeedback,
-  confirmBookingPayment
+  confirmBookingPayment,
+  getAllBookings
 } from "../controllers/Customers.controller";
 import { authenticate, requireRole } from "../middlewares/AuthMiddleware";  
 
@@ -158,10 +158,11 @@ router.patch("/cancel/:bookingId", logger, authenticate, requireRole("Customer")
  *         description: Internal server error
  */
 
-router.post("/confirm", authenticate, requireRole("Cinema Admin"), confirmBookingPayment)
+router.post("/confirm", logger, authenticate, requireRole("Cinema Admin"), confirmBookingPayment)
 
 // router.patch("/:bookingId/cancel", logger, authenticate, requireRole("Customer"), validateCancelBooking, cancelBooking);
 
+router.get("/", logger, authenticate, requireRole("Cinema Admin"), getAllBookings)
 
 
 export default router

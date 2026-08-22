@@ -143,7 +143,7 @@ export const addfavorite= async (req: Request, res: Response) =>{
     const movie=await Movies.findById(movieId)
     if(!movie)
         return res.status(400).json({ message: "Movie not found" });
-    const updateduser=await Users.findByIdAndUpdate(customerId, { $push: { favoriteMovies: movieId } },
+    const updateduser=await Users.findByIdAndUpdate(customerId, { $addToSet: { favoriteMovies: movieId } },
       { new: true }
     );
 
@@ -193,4 +193,16 @@ export const confirmBookingPayment = async (req: Request, res: Response) => {
     await booking.save()
 
     res.status(200).send({message: `Booking payment has been confirmed`})
+}
+
+
+
+export const getAllBookings = async (req: Request, res: Response) => {
+    try{
+        const bookings = await Bookings.find()
+        res.status(200).send({bookings})
+    }
+    catch{
+        res.status(500).send({error: `Server error while getting all bookings`})
+    }
 }

@@ -8,9 +8,8 @@ import { Bookings } from '../models/booking.model';
 export const validateNewBooking = async (req: Request, res: Response, next: NextFunction) => {
     const customerId = (req as any).user.id;
     const { showtimeId, selectedSeats } = req.body;
-    const bookingStatus = "Pending";    
     // check missing fields
-    if (!customerId || !showtimeId || !selectedSeats || !bookingStatus) {
+    if (!customerId || !showtimeId || !selectedSeats) {
         if(!customerId) console.log("ERR")
         return res.status(400).json({ error: 'All fields are required' });
     }
@@ -24,7 +23,7 @@ export const validateNewBooking = async (req: Request, res: Response, next: Next
         return res.status(400).json({ error: 'At least one seat must be selected' });
     }
     //check if user exists and is a customer 
-    const CurrentUser = await Users.findById(customerId)
+    // const CurrentUser = await Users.findById(customerId)
     // if (CurrentUser == null || CurrentUser.role != "Customer"){
         // return res.status(400).json({ error: 'Customer does not exist' });
     // }
@@ -71,7 +70,7 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
     const current_user= await Users.findById((req as any).user.id)
     const booking = await Bookings.findById(bookingId);
     if (!current_user) {
-    return res.status(401).json({ error: 'User not found' });
+        return res.status(401).json({ error: 'User not found' });
     }
     if (!booking) {
         return res.status(404).json({ error: 'Booking not found' });
@@ -91,7 +90,7 @@ export const validateCancelBooking = async (req: Request, res: Response, next: N
         return res.status(400).json({ error: 'Cannot cancel a booking after the showtime has started' });
     }
     if (booking.bookingStatus === 'Cancelled') {
-    return res.status(400).json({ error: 'Booking is already cancelled' });
+        return res.status(400).json({ error: 'Booking is already cancelled' });
     }
     next();
 };

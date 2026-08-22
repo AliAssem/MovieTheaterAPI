@@ -170,13 +170,13 @@ router.get("/search", logger, authenticate, searchMovies)
  *       500:
  *         description: Server error
  */
-router.post("/add", logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, addMovie);
-router.put("/replace", logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, replaceMovie);
-router.patch("/edit", logger, authenticate, requireRole("Cinema Admin"), editMovie);
-router.delete("/delete", logger, authenticate, requireRole("Cinema Admin"), deleteMovie);
+router.post("/add",                  logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, addMovie);
+router.put("/replace",               logger, authenticate, requireRole("Cinema Admin"), validateNewMovie, replaceMovie);
+router.patch("/edit",                logger, authenticate, requireRole("Cinema Admin"), editMovie);
+router.delete("/delete",             logger, authenticate, requireRole("Cinema Admin"), deleteMovie);
 
-router.post("/feedback",authenticate, requireRole("Customer"),validatefeedback,postFeedback)
+router.post("/feedback",             logger, authenticate, requireRole("Customer"), validatefeedback,postFeedback)
 
-router.post("/addFavorite/:movieId", authenticate, requireRole("Customer"), addfavorite);
-router.get("/favorite", authenticate, requireRole("Customer"), getfavorite);
+router.post("/addFavorite/:movieId", logger, authenticate, requireRole("Customer"), addfavorite);
+router.get("/favorite",              logger, authenticate, requireRole("Customer"), getfavorite);
 export default router;

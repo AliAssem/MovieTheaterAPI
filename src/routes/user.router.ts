@@ -52,7 +52,6 @@ router.post("/signup", logger, validateUserSignup, userSignup)
  *   post:
  *     tags: [Account]
  *     summary: Login into an existing account
- *     parameters:
  *     requestBody:
  *       required: true
  *       content:
